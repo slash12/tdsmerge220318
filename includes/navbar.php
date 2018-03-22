@@ -1,13 +1,5 @@
-<!-- <script src="../js/jquery-3.2.1.slim.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
-<script src="../js/bootstrap.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">  -->
 
 <?php
-//require('includes/connect.php');
-//check login cookies
-
-//echo "cookie".$_COOKIE['uname'];
 
 function CheckCookieLogin($dbc)
 {
@@ -86,23 +78,36 @@ function save_state($a)
         $lg_search_exe = mysqli_query($dbc, $lg_search);
         $result = mysqli_fetch_assoc($lg_search_exe);
 
+
         if($lg_search_exe)
         {
-          //echo "<script>alert('test4')</script>";
+
           if(mysqli_num_rows($lg_search_exe) > 0)
           {
-            session_start();
-            $_SESSION['uname'] = $lguname;
-            //If checkbox 'Remember me' is click
-              if($_POST['chklgrem'] == "1")
-              {
-                $_SESSION['user_login'] = 1;
-                $cookiehash = md5(sha1($_SESSION['uname'].$result['user_id']));
-                setcookie("uname",$cookiehash,time()+86400 * 30, "/");
-                $login_status = "UPDATE tbl_user SET login_session = '$cookiehash' WHERE username='$lguname';";
-                $login_status_exe = mysqli_query($dbc, $login_status);
-              }
-            header('Location: index.php');
+
+            //Check if it is admin
+            if($result['username'] == "tdcops")
+            {
+              session_start();
+              $_SESSION['admin'] = $lguname;
+              header('Location: webadmin/admin_home.php');
+            }
+            else
+            {
+              session_start();
+              $_SESSION['uname'] = $lguname;
+              //If checkbox 'Remember me' is click
+                if($_POST['chklgrem'] == "1")
+                {
+                  $_SESSION['user_login'] = 1;
+                  $cookiehash = md5(sha1($_SESSION['uname'].$result['user_id']));
+                  setcookie("uname",$cookiehash,time()+86400 * 30, "/");
+                  $login_status = "UPDATE tbl_user SET login_session = '$cookiehash' WHERE username='$lguname';";
+                  $login_status_exe = mysqli_query($dbc, $login_status);
+                }
+              header('Location: index.php');
+            }
+
           }
           else
           {
@@ -134,6 +139,27 @@ function save_state($a)
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Create T-Shirt</a>
+        </li>
+        <li class="nav-item">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">Group<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="#">Men T-Shirt</a></li>
+              <li class="dropdown-item"><a href="#">Women T-Shirt</a></li>
+              <li class="dropdown-item"><a href="#">Kids T-Shirt</a></li>
+              <li class="dropdown-item"><a href="#">Couples T-Shirt</a></li>
+            </ul>
+          </li>
+        </li>
+        <li class="nav-item">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">Help<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="#">Contact us</a></li>
+              <li class="dropdown-item"><a href="#">About us</a></li>
+              <li class="dropdown-item"><a href="#">FAQ</a></li>
+            </ul>
+          </li>
         </li>
       </ul>
         <ul class="nav navbar-nav navbar-right">

@@ -2,7 +2,7 @@
   use PHPMailer\PHPMailer\PHPMailer;
   use PHPMailer\PHPMailer\Exception;
 
-  require('includes/connect.php');
+  require('includes/dbconnect.php');
 
   if(isset($_GET['txtfpemail']))
   {

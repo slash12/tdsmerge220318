@@ -6,7 +6,7 @@ if(isset($_SESSION['uname']))
 }
   use PHPMailer\PHPMailer\PHPMailer;
   use PHPMailer\PHPMailer\Exception;
-  require('includes/connect.php');
+  require('includes/dbconnect.php');
 
 ?>
 <!DOCTYPE html>
@@ -69,6 +69,11 @@ if(isset($_SESSION['uname']))
         /*-----------------------------------------------------------------*/
         //Country
         $country = $_POST['sltcountry'];
+        if($country == "0")
+        {
+          $error[]= "Please select your Country";
+          $country_err = "<div class='invalid-feedback'>Please select your Country</div>";
+        }
 
 
         /*-----------------------------------------------------------------*/
@@ -173,7 +178,7 @@ if(isset($_SESSION['uname']))
                 $mail->Body    = "
                 Hello $uname, <br>
                 Please Click on the link below to activate your Account: <br><br>
-                <a href=\"http://localhost:8001/ds_ver2/tds_beta/nadeem/emailVerified.php?email=$email&token=$token\">Activate your account</a>
+                <a href=\"http://localhost:8001/merge220318/tdsmerge220318/emailVerified.php?email=$email&token=$token\">Activate your account</a>
             ";
 
                 if ($mail->send()) {
@@ -225,10 +230,12 @@ if(isset($_SESSION['uname']))
         <!--Country-->
 
           <label>Country</label>
-            <select class="form-control" id="sltcountry" name="sltcountry">
+            <select class="form-control <?php err_check(@$country_err); ?>" id="sltcountry" name="sltcountry">
+              <option value="0" selected>Choose a Country</option>
               <?php
               $all_country = "SELECT country_id, country_name FROM country;";
               $country_qry = mysqli_query($dbc, $all_country);
+
 
               while($row = mysqli_fetch_array($country_qry, MYSQLI_ASSOC))
               {
@@ -236,6 +243,7 @@ if(isset($_SESSION['uname']))
               }
               ?>
             </select>
+            <?php echo @$country_err; ?>
 
       </td>
       <td>

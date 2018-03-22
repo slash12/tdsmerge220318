@@ -4,7 +4,7 @@ if(isset($_SESSION['uname']))
 {
   header('Location: index.php');
 }
-require('includes/connect.php');
+require('includes/dbconnect.php');
 
 ?>
 <!DOCTYPE html>

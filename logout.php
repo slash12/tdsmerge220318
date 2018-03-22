@@ -1,5 +1,5 @@
 <?php
-require('includes/connect.php');
+require('includes/dbconnect.php');
 	session_start();
 
 	unset($_SESSION['user_login']);
