@@ -1,4 +1,4 @@
-
+<!-- <link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css"> -->
 <?php
 
 function CheckCookieLogin($dbc)
@@ -168,12 +168,15 @@ function save_state($a)
 
           if(isset($_SESSION['uname']))
           {
-            echo "<li class='nav-item'>
-                <a class='nav-link btn btn-default navbar-btn' href='#'>Hello, ".@$_SESSION['uname']."</a>
-            </li>
-            <li class='nav-item'>
-                <a class='nav-link btn btn-default navbar-btn' href='logout.php'>Logout</a>
-            </li>";
+            echo
+            "<li class='nav-item'>
+              <li class='dropdown'>
+                <a href='#' class='dropdown-toggle nav-link pushleft' data-toggle='dropdown'>".@$_SESSION['uname']."<b class='caret'></b></a>
+                <ul class='dropdown-menu'>
+                  <li class='dropdown-item'><a href='logout.php'>Logout</a></li>
+                </ul>
+              </li>
+              ";
           }
           else
           {

@@ -300,6 +300,10 @@ body
 }
 /*-----------------------------------------*/
 /* Login Form (includes/navbar.php) */
+.pushleft
+{
+  margin-right: 70px;
+}
 
 .modal-content
 {

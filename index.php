@@ -13,7 +13,7 @@ if(!isset($_SESSION['user_login']))
 <head>
   <meta charset="utf-8">
   <title>Index</title>
-  <link rel="stylesheet" href="css/style.css" type="text/css">
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="all">
   <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
   <link rel="stylesheet" href="css/bootstrap-magnify.css" type="text/css">
   <script src="http://code.jquery.com/jquery-1.11.3.js"></script>
