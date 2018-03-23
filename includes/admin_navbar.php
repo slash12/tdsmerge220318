@@ -1,8 +1,8 @@
 <?php session_start(); ?>
-<script src="../js/jquery-3.2.1.slim.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
-<link rel="stylesheet" href="../css/style.css">
-<script src="../js/bootstrap.min.js"></script>
+<!-- <script src="../js/jquery.min.js"></script> -->
+
+
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="admin_nav">
   <div class="container-fluid">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navShirtPrint" aria-controls="navShirtPrint" aria-expanded="false" aria-label="Toggle navigation">

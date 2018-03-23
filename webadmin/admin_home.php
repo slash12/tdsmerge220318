@@ -6,10 +6,11 @@
   <head>
     <meta charset="utf-8">
     <title>ShirtPrints - T-Shirt Form</title>
+    <link rel="stylesheet" href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript" src="../js/jquery.form.js"></script>
-    <link href="../css/style.css" type="text/css" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="../js/bootstrap.min.js"></script>
 
   </head>
   <body>
