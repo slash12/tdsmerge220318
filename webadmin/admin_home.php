@@ -8,9 +8,19 @@
     <title>ShirtPrints - T-Shirt Form</title>
     <link rel="stylesheet" href="../css/style.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
     <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript" src="../js/jquery.form.js"></script>
+    <script src="../js/popper-select.js"></script>
     <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/bootstrap-select.min.js"></script>
+
+    <script>
+    $(document).ready(function()
+    {
+     $('.selectpicker').selectpicker();
+    });
+    </script>
 
   </head>
   <body>
@@ -60,51 +70,20 @@
             $category = mysqli_real_escape_string($dbc, $cat_cc);
           }
 
-          //color T-Shrit front-size
-          $colorfront = mysqli_real_escape_string($dbc, $_POST["txtfcolor"]);
-
-          //color T-Shrit front-size
-          $colorback = mysqli_real_escape_string($dbc, $_POST["txtbcolor"]);;
-
-
-          // Design title Validation
-          $design_cc = trim($_POST['txtdesign']);
-          if(empty($design_cc))
+          // Design Validation
+          $design_cc = $_POST['sltdesign'];
+          if($design_cc == "0")
           {
-            $arr_err[] = "Please enter a design title";
-            $design_err = "Please enter a design title";
+            $arr_err[] = "Please choose a design";
+            $design_err = "Please choose a design";
           }
           else
           {
             $design = mysqli_real_escape_string($dbc, $design_cc);
           }
 
-          // Features Validation
-          $features_cc = $_POST['sltcat'];
-          if($features_cc == "0")
-          {
-            $arr_err[] = "Please choose a features";
-            $features_err = "Please choose a features";
-          }
-          else
-          {
-            $features = mysqli_real_escape_string($dbc, $features_cc);
-          }
-
-          // Fabric Validation
-          $fabric_cc = $_POST['sltfabric'];
-          if($fabric_cc == "0")
-          {
-            $arr_err[] = "Please choose a fabric";
-            $fabric_err = "Please choose a fabric";
-          }
-          else
-          {
-            $fabric = mysqli_real_escape_string($dbc, $fabric_cc);
-          }
-
           // Type Validation
-          $type_cc = $_POST['sltfabric'];
+          $type_cc = $_POST['slttype'];
           if($type_cc == "0")
           {
             $arr_err[] = "Please choose a type";
@@ -157,8 +136,8 @@
           }
 
           // Pattern Validation
-          $pattern_cc = trim($_POST['txtpat']);
-          if(empty($pattern_cc))
+          $pattern_cc = $_POST['sltpat'];
+          if($pattern_cc == "0")
           {
             $arr_err[] = "Please enter a pattern";
             $pattern_err = "Please enter a pattern";
@@ -219,27 +198,90 @@
             move_uploaded_file($_FILES["uplfimg"]["tmp_name"][0], $target_file);
             move_uploaded_file($_FILES["uplbimg"]["tmp_name"][0], $target_file1);
 
+            mysqli_autocommit($dbc,FALSE);
 
-
-
-            $insert_qry= "INSERT INTO `tshirt` (`brand_id`, `category_id`, `color(front)`, `color(back)`, `design_title`, `features_id`, `fabric_id`, `type_id`, `img_front`, `img_back`, `pattern`, `price`, `size_id`, `quantity`) VALUES ('$brand', '$category', '$colorfront', '$colorback', '$design', '$features', '$fabric', '$type', '$target_file', '$target_file1', '$pattern', '$price', '$size', '$qty');";
+            $insert_qry= "INSERT INTO `tshirt` (`brand_id`, `category_id`, `design_id`, `type_id`, `img_front`, `img_back`, `pattern_id`, `price`, `size_id`, `quantity`) VALUES ('$brand', '$category', '$design', '$type', '$target_file', '$target_file1', '$pattern', '$price', '$size', '$qty');";
             $insert_qry_exe = mysqli_query($dbc, $insert_qry);
+
+
 
             if($insert_qry_exe)
             {
-              echo "<script>alert('New T-Shirt Added!');</script>";
+              $shirt_id = mysqli_insert_id($dbc);
+              //echo $shirt_id."<br>";
+
+              //Color dropdown validation
+              @$color_cc = $_POST["ddcolor"];
+              if(isset($color_cc))
+              {
+                foreach ($color_cc as $color)
+                {
+                  $res_color = mysqli_query($dbc, "INSERT INTO tbl_tshirt_color(tshirt_id, color_id) VALUES('$shirt_id', '$color');");
+                }
+                if($res_color)
+                {
+                  // Features Validation
+                  @$features_cc = $_POST['sltfeature'];
+                  if(isset($features_cc))
+                  {
+                    foreach ($features_cc as $feature)
+                    {
+                      $res_feature = mysqli_query($dbc, "INSERT INTO tbl_tshirt_features(tshirt_id, feature_id) VALUES('$shirt_id', '$feature');");
+                    }
+                  }
+                  else
+                  {
+                    $features_err = "<br>Please select a feature";
+                    mysqli_rollback($dbc);
+                  }
+
+                  if($res_feature)
+                  {
+                    // Fabric Validation
+                    $fabric_cc = $_POST['sltfabric'];
+                    if(isset($fabric_cc))
+                    {
+                      foreach ($fabric_cc as $fabric)
+                      {
+                        $res_fabric = mysqli_query($dbc, "INSERT INTO tbl_tshirt_fabric(tshirt_id, fabric_id) VALUES('$shirt_id', '$fabric');");
+                      }
+                    }
+                    else
+                    {
+                      $fabric_err = "<br>Please select a fabric";
+                      mysqli_rollback($dbc);
+                    }
+
+                    if($res_fabric)
+                    {
+                      mysqli_commit($dbc);
+                      echo "<script>alert('New T-Shirt Added!');</script>";
+                    }
+                  }
+                  else
+                  {
+                    echo "not ".mysqli_error($dbc);
+                    mysqli_rollback($dbc);
+                  }
+                }
+                else
+                {
+                  echo "not ".mysqli_error($dbc);
+                  mysqli_rollback($dbc);
+                }
+              }
+              else
+              {
+                $color_err = "<br>Please select a color";
+                mysqli_rollback($dbc);
+              }
             }
             else
             {
-              echo "<script>alert('".mysqli_error($dbc)."')</script>;";
+              echo "error ".mysqli_error($dbc);
             }
-
-
           }
-
         }
-
-
       ?>
 
       <div class="tab-pane fade  show active " id="add_tshirt" role="tabpanel" aria-labelledby="add_tshirt-tab">
@@ -281,28 +323,46 @@
                 <span class="errfrm"><?php echo @$cat_err."<br>"; ?></span>
 
               <!--Colour-->
-                <label for="Color(Front)">Color(Front)</label>
-                <input type="color"  placeholder="Pick a color" id="txtfcolor" name="txtfcolor">
-                <label for="Color(Back)">Color(Back)</label>
-                <input type="color"  placeholder="Pick a color" id="txtbcolor" name="txtbcolor">
+                <label class="mr-sm-2" for="Color">Color</label>
+                <select id="ddcolor" name="ddcolor[]" class="selectpicker" data-live-search="true" data-size="5" title="Choose a Color/s"  multiple>
+                  <?php
+                    $sql_color = "SELECT * FROM tbl_color;";
+                    $sql_color_exe = mysqli_query($dbc, $sql_color);
 
-                <div class="form-group has-error has-feedback">
-                <label for="Design_Title">Design Title</label>
-                <input type="text" class="form-control" name="txtdesign" id="txtdesign" placeholder="Design Title (e.g Animal logo)">
-                <span class="errfrm"><?php echo @$design_err."<br>"; ?></span>
-              </div>
+                    while($colrow = mysqli_fetch_array($sql_color_exe, MYSQLI_ASSOC))
+                    {
+                      //
+                        echo "<option value='".$colrow['color_id']."' data-tokens='".$colrow['color']."' data-subtext='".$colrow['color_code']."' style='background:".$colrow['color_code']."; color: #fff;'>".$colrow['color']."</option>";
+                    }
+                  ?>
+                </select>
+                <span class="errfrm"><?php echo @$color_err."<br>"; ?></span>
+
+                <!--Design-->
+                <label for="Design">Design</label>
+                <select class="selectpicker" id="sltdesign" name="sltdesign" data-live-search="true" data-size="5" >
+                  <option value="0" disabled selected>Choose Design..</option>
+                  <?php
+                  $sql_design ="Select * from tbl_design;";
+                  $sql_design_exe = mysqli_query($dbc,$sql_design);
+                  while ($designrow =mysqli_fetch_array($sql_design_exe, MYSQLI_ASSOC))
+                  {
+                    echo "<option value='".$designrow['design_id']."' data-tokens='".$designrow['design']."'>".$designrow['design']."</option>";
+                  }
+                  ?>
+                </select>
+                <span class="errfrm"><?php echo "<br>".@$design_err."<br>"; ?></span>
+
 
                   <!--features-->
                   <label class="mr-sm-2" for="Features">Features</label>
-                  <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="sltfeature" name="sltfeature">
-                    <option value="0">Choose a feature..</option>
+                  <select class="selectpicker" id="sltfeature" name="sltfeature[]" data-live-search="true" data-size="5" title="Choose feature/s"  multiple>
                     <?php
-                    $sql ="Select * from features";
-                    $query = mysqli_query($dbc,$sql);
-                    while ($row =mysqli_fetch_array($query)) {
-                      $id = $row['id'];
-                      $title = $row['title'];
-                      echo "<option value='$id'>$title</option>";
+                    $sql_feature ="Select * from features;";
+                    $sql_feature_exe = mysqli_query($dbc,$sql_feature);
+                    while ($featurerow =mysqli_fetch_array($sql_feature_exe))
+                    {
+                      echo "<option value='".$featurerow['feature_id']."' data-tokens='".$featurerow['feature']."'>".$featurerow['feature']."</option>";
                     }
                     ?>
                   </select>
@@ -312,16 +372,13 @@
             <!--Fabric-->
               <div class="col-sm">
               <label class="mr-sm-2" for="Fabrics">Fabrics</label>
-              <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="sltfabric" name="sltfabric">
-              <option value="0">Choose a fabric..</option>
+              <select class="selectpicker" id="sltfabric" name="sltfabric[]" data-live-search="true" data-size="5" title="Choose fabric/s"  multiple>
               <?php
-
-              $sql ="Select * from fabrics";
-              $query = mysqli_query($dbc,$sql);
-              while ($row =mysqli_fetch_array($query)) {
-                $id = $row['id'];
-                $title = $row['title'];
-                echo "<option value='$id'>$title</option>";
+              $sql_fabric ="Select * from fabrics";
+              $sql_fabric_exe = mysqli_query($dbc,$sql_fabric);
+              while ($fabricrow =mysqli_fetch_array($sql_fabric_exe, MYSQLI_ASSOC))
+              {
+                echo "<option value='".$fabricrow['fabric_id']."' data-tokens='".$fabricrow['fabric']."'>".$fabricrow['fabric']."</option>";
               }
               ?>
               </select>
@@ -380,7 +437,19 @@
       <div class="col-sm">
           <!--Pattern-->
           <label for="Pattern">Pattern</label>
-          <input type="text" name="txtpat" id="txtpat" class="form-control" placeholder="Pattern">
+          <select class="selectpicker icon-menus" id="sltpat" name="sltpat" data-live-search="true" data-size="5">
+            <option value="0" disabled selected>Choose a pattern</option>
+          <?php
+          $sql_pattern ="Select * from tbl_pattern;";
+          $sql_pattern_exe = mysqli_query($dbc,$sql_pattern);
+          while ($patternrow =mysqli_fetch_array($sql_pattern_exe, MYSQLI_ASSOC))
+          {
+            ?>
+            <option style="background-image:url('<?php echo $patternrow['p_img_path']; ?>');" value="<?php echo $patternrow['pattern_id']; ?>" data-tokens="<?php echo $patternrow['pattern'] ?>"><?php echo $patternrow['pattern']; ?></option>;
+            <?php
+          }
+          ?>
+          </select>
           <span class="errfrm"><?php echo @$pattern_err."<br>"; ?> </span>
 
           <!--Price-->

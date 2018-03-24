@@ -41,10 +41,19 @@ background-image:url('../images/header_footer.jpg');
 {
   margin-top: 45px;
 }
+
+.icon-menus
+{
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  padding-left: 30px;
+}
+
 .admin_home
 {
 margin-bottom: 100px;
 }
+
 
 /*pm_check*/
 /*Message Button inbox/outbox/send message*/
