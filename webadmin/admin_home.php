@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../css/style.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/file-upload-with-preview.css">
     <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript" src="../js/jquery.form.js"></script>
     <script src="../js/popper-select.js"></script>
@@ -135,17 +136,6 @@
             echo "<script>alert('Error Uploading Image Back: ".$_FILES['uplbimg']['error'][0]."');</script>";
           }
 
-          // Pattern Validation
-          $pattern_cc = $_POST['sltpat'];
-          if($pattern_cc == "0")
-          {
-            $arr_err[] = "Please enter a pattern";
-            $pattern_err = "Please enter a pattern";
-          }
-          else
-          {
-            $pattern = mysqli_real_escape_string($dbc, $pattern_cc);
-          }
 
           // Price Validation
           $price_cc = trim($_POST['txtprice']);
@@ -200,7 +190,7 @@
 
             mysqli_autocommit($dbc,FALSE);
 
-            $insert_qry= "INSERT INTO `tshirt` (`brand_id`, `category_id`, `design_id`, `type_id`, `img_front`, `img_back`, `pattern_id`, `price`, `size_id`, `quantity`) VALUES ('$brand', '$category', '$design', '$type', '$target_file', '$target_file1', '$pattern', '$price', '$size', '$qty');";
+            $insert_qry= "INSERT INTO `tshirt` (`brand_id`, `category_id`, `design_id`, `type_id`, `img_front`, `img_back`, `price`, `size_id`, `quantity`) VALUES ('$brand', '$category', '$design', '$type', '$target_file', '$target_file1', '$price', '$size', '$qty');";
             $insert_qry_exe = mysqli_query($dbc, $insert_qry);
 
 
@@ -253,6 +243,24 @@
                     }
 
                     if($res_fabric)
+                    {
+                      // Pattern Validation
+                      $pattern_cc = $_POST['sltpat'];
+                      if(isset($pattern_cc))
+                      {
+                        foreach ($pattern_cc as $pattern)
+                        {
+                          $res_pattern = mysqli_query($dbc, "INSERT INTO tbl_tshirt_pattern(tshirt_id, pattern_id) VALUES('$shirt_id', '$pattern');");
+                        }
+
+                      }
+                      else
+                      {
+                        $pattern_err = "Please enter a pattern";
+                        mysqli_rollback($dbc);
+                      }
+                    }
+                    if($res_pattern)
                     {
                       mysqli_commit($dbc);
                       echo "<script>alert('New T-Shirt Added!');</script>";
@@ -402,50 +410,46 @@
             <span class="errfrm"><?php echo @$type_err."<br>"; ?></span>
           <!-- </div> -->
 
-              <!--Image Front-->
-              <label for="Image_(front)">Image (front)</label>
-              <input type="file" name="uplfimg[]" id="uplfimg" class="form-control" onchange="readURL(this);">
-              <span class="errfrm"><?php echo @$img_f_err; ?></span>
-               <img id="imgf_preview" src="#" alt="your image" width="160px" height="80px;"/><br>
-
-              <script type="text/javascript">
-              function readURL(input)
-              {
-                if (input.files && input.files[0])
-                {
-                  var reader = new FileReader();
-
-                reader.onload = function (e)
-                {
-                    $('#imgf_preview').attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
-                }
-              }
-              </script>
-
+               <div class="custom-file-container" data-upload-id="imgf">
+               <label>T-Shirt Front <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+               <label class="custom-file-container__custom-file" >
+                   <input type="file" id="uplfimg[]" name="uplfimg" class="custom-file-container__custom-file__custom-file-input">
+                   <span class="custom-file-container__custom-file__custom-file-control"></span>
+               </label>
+                <div id="imgfontprev" class="custom-file-container__image-preview"></div>
+               </div>
+               <span class="errfrm"><?php echo @$img_f_err; ?></span>
 
               <!--Image back-->
-              <label for="Image_(back)">Image (back)</label>
+              <!-- <label for="Image_(back)">Image (back)</label>
               <input type="file" name="uplbimg[]" id="uplbimg" class="form-control" placeholder="Image back" onchange="document.getElementById('imgb_preview').src = window.URL.createObjectURL(this.files[0]);">
+              <span class="errfrm"><?php //echo @$img_b_err; ?></span>
+              <img id="imgb_preview" src="#" alt=" image" width="160px" height="80px;" /> -->
+
+              <div class="custom-file-container" data-upload-id="imgb">
+              <label>T-Shirt Back <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+              <label class="custom-file-container__custom-file" >
+                  <input type="file" id="uplbimg[]" name="uplbimg" class="custom-file-container__custom-file__custom-file-input">
+                  <span class="custom-file-container__custom-file__custom-file-control"></span>
+              </label>
+               <div id="imgfontprev" class="custom-file-container__image-preview"></div>
+              </div>
               <span class="errfrm"><?php echo @$img_b_err; ?></span>
-              <img id="imgb_preview" src="#" alt=" image" width="160px" height="80px;" />
+
     </div>
 
 
       <div class="col-sm">
           <!--Pattern-->
           <label for="Pattern">Pattern</label>
-          <select class="selectpicker icon-menus" id="sltpat" name="sltpat" data-live-search="true" data-size="5">
-            <option value="0" disabled selected>Choose a pattern</option>
+          <select class="selectpicker icon-menus" title="Select a pattern" id="sltpat" name="sltpat[]" data-live-search="true" data-size="5" multiple>
           <?php
           $sql_pattern ="Select * from tbl_pattern;";
           $sql_pattern_exe = mysqli_query($dbc,$sql_pattern);
           while ($patternrow =mysqli_fetch_array($sql_pattern_exe, MYSQLI_ASSOC))
           {
             ?>
-            <option style="background-image:url('<?php echo $patternrow['p_img_path']; ?>');" value="<?php echo $patternrow['pattern_id']; ?>" data-tokens="<?php echo $patternrow['pattern'] ?>"><?php echo $patternrow['pattern']; ?></option>;
+            <option data-content="<img src='<?php echo $patternrow['p_img_path']; ?>' width='15px' height='15px'> <?php echo $patternrow['pattern']; ?>" value="<?php echo $patternrow['pattern_id']; ?>" data-tokens="<?php echo $patternrow['pattern'] ?>"></option>;
             <?php
           }
           ?>
@@ -501,6 +505,10 @@
     <div class="tab-pane fade" id="remove_tshirt" role="tabpanel" aria-labelledby="remove_tshirt-tab">..3.</div>
     <div class="tab-pane fade" id="view_tshirt" role="tabpanel" aria-labelledby="view_tshirt-tab">..4.</div>
     </div>
-
+    <script src="../js/file-upload-with-preview.js"></script>
+    <script>
+      var upload1 = new FileUploadWithPreview('imgf');
+      var upload1 = new FileUploadWithPreview('imgb');
+    </script>
   </body>
 </html>

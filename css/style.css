@@ -42,6 +42,17 @@ background-image:url('../images/header_footer.jpg');
   margin-top: 45px;
 }
 
+.custom-file-container
+{
+  width: 100%;
+}
+
+.custom-file-container__image-preview
+{
+  height: 110px !important;
+  margin-bottom: 4px !important;
+}
+
 .icon-menus
 {
   background-repeat: no-repeat;
