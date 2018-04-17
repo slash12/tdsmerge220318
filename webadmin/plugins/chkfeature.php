@@ -1,0 +1,21 @@
+<?php
+  require('../../includes/dbconnect.php');
+  $addfeature = $_POST["add_feature"];
+  if(isset($addfeature))
+  {
+    $sql ="SELECT * FROM features WHERE feature ='$addfeature';";
+    $res_feature = mysqli_query($dbc, $sql);
+    if(mysqli_num_rows($res_feature) > 0)
+    {
+      echo "true";
+    }
+    else
+    {
+      echo "false";
+    }
+  }
+  else
+  {
+    echo "qry no run";
+  }
+?>
