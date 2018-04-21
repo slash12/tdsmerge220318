@@ -3,7 +3,7 @@
   $addcat = $_POST["add_cat"];
   if(isset($addcat))
   {
-    $sql ="SELECT * FROM category WHERE title ='$addcat';";
+    $sql ="SELECT * FROM tbl_category WHERE cat_name ='$addcat';";
     $res_cat = mysqli_query($dbc, $sql);
     if(mysqli_num_rows($res_cat) > 0)
     {

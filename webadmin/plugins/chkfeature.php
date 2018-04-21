@@ -3,7 +3,7 @@
   $addfeature = $_POST["add_feature"];
   if(isset($addfeature))
   {
-    $sql ="SELECT * FROM features WHERE feature ='$addfeature';";
+    $sql ="SELECT * FROM tbl_feature WHERE feature ='$addfeature';";
     $res_feature = mysqli_query($dbc, $sql);
     if(mysqli_num_rows($res_feature) > 0)
     {

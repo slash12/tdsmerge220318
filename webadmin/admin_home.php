@@ -1,11 +1,11 @@
 <?php require("no_redirect.php");
-// require("../includes/dbconnect.php");
+error_reporting(E_ALL & ~E_WARNING);
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>ShirtPrints - T-Shirt Form</title>
+    <title>ShirtPrints - Add T-Shirt Form</title>
     <link rel="stylesheet" href="../css/style.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/bootstrap-select.min.css">
@@ -226,7 +226,7 @@
               }
 
             $pattern_cc = @$_POST['sltpat'];
-            if(empty($fabric_cc))
+            if(empty($pattern_cc))
             {
               $pattern_err = "Please enter a pattern";
             }
@@ -238,7 +238,7 @@
 
 
 
-            $insert_qry= "INSERT INTO `tshirt` (`brand_id`, `category_id`, `design_id`, `type_id`, `img_front`, `img_back`, `price`, `size_id`, `quantity`) VALUES ('$brand', '$category', '$design', '$type', '$target_file_imgf', '$target_file_imgb', '$price', '$size', '$qty');";
+            $insert_qry= "INSERT INTO `tbl_tshirt` (`brand_id`, `category_id`, `design_id`, `type_id`, `img_front`, `img_back`, `price`, `size_id`, `quantity`) VALUES ('$brand', '$category', '$design', '$type', '$target_file_imgf', '$target_file_imgb', '$price', '$size', '$qty');";
             $insert_qry_exe = mysqli_query($dbc, $insert_qry);
 
             
@@ -355,13 +355,13 @@
                   <select class="selectpicker" id="sltbrand" name="sltbrand">
                     <option value="0">Choose a brand..</option>
                     <?php
-                    $sql ="Select * from brands";
+                    $sql ="Select * from tbl_brand";
                     $query = mysqli_query($dbc,$sql);
                     while ($row =mysqli_fetch_array($query)) {
-                      $id = $row['id'];
-                      $title = $row['title'];
+                      $brand_id = $row['brand_id'];
+                      $brand = $row['brand'];
                       ?>
-                      <option value='<?php echo $id;?>' <?php if(@$_POST['sltbrand']==$id){echo 'selected';} ?>><?php echo $title;?></option>";
+                      <option value='<?php echo $brand_id;?>' <?php if(@$_POST['sltbrand']==$brand_id){echo 'selected';} ?>><?php echo $brand;?></option>";
                       <?php
                     }
                     ?>
@@ -376,13 +376,13 @@
                 <select class="selectpicker" id="sltcat" name="sltcat" data-width="201px">
                   <option value="0">Choose a category..</option>
                   <?php
-                  $sql ="Select * from category";
+                  $sql ="Select * from tbl_category";
                   $query = mysqli_query($dbc,$sql);
                   while ($row =mysqli_fetch_array($query)) {
-                    $id = $row['id'];
-                    $title = $row['title'];
+                    $cat_id = $row['cat_id'];
+                    $category = $row['cat_name'];
                     ?>
-                    <option value='<?php echo $id; ?>' <?php if(@$_POST['sltcat']==$id){echo 'selected';} ?>><?php echo $title; ?></option>";
+                    <option value='<?php echo $cat_id; ?>' <?php if(@$_POST['sltcat']==$cat_id){echo 'selected';} ?>><?php echo $category; ?></option>";
                     <?php
                   }
                   ?>
@@ -402,9 +402,9 @@
                     $sql_color_exe = mysqli_query($dbc, $sql_color);
 
                     while($colrow = mysqli_fetch_array($sql_color_exe, MYSQLI_ASSOC))
-                    {
-                      //
-                        echo "<option value='".$colrow['color_id']."' data-tokens='".$colrow['color']."' data-subtext='".$colrow['color_code']."' style='background:".$colrow['color_code']."; color: black;'>".$colrow['color']."</option>";
+                    {?>
+                        <option value="<?php echo $colrow['color_id']?>" data-tokens="<?php echo $colrow['color'];?>" data-subtext="<?php echo $colrow['color_code'];?>" style='background:<?php echo $colrow['color_code'];?>; color: black;' <?php foreach(@$_POST['ddcolor'] as $col){if($col==$colrow['color_id']){echo "selected";}} ?>><?php echo $colrow['color'];?></option>;
+                      <?php
                     }
                   ?>
                 </select>
@@ -438,11 +438,13 @@
                   <label class="mr-sm-2" for="Features">Features</label>
                   <select class="selectpicker" id="sltfeature" data-width="201px" name="sltfeature[]" data-live-search="true" data-size="5" title="Choose feature/s"  multiple>
                     <?php
-                    $sql_feature ="Select * from features;";
+                    $sql_feature ="Select * from tbl_feature;";
                     $sql_feature_exe = mysqli_query($dbc,$sql_feature);
                     while ($featurerow =mysqli_fetch_array($sql_feature_exe))
                     {
-                      echo "<option value='".$featurerow['feature_id']."' data-tokens='".$featurerow['feature']."'>".$featurerow['feature']."</option>";
+                      ?>
+                      <option value="<?php echo $featurerow['feature_id'];?>" data-tokens="<?php echo $featurerow['feature'];?>" <?php foreach(@$_POST['sltfeature'] as $col){if($col==$featurerow['feature_id']){echo "selected";}} ?>><?php echo $featurerow['feature'];?></option>;
+                      <?php
                     }
                     ?>
                   </select>
@@ -456,11 +458,13 @@
               <label class="mr-sm-2" for="Fabrics">Fabrics</label>
               <select class="selectpicker" id="sltfabric" name="sltfabric[]" data-live-search="true" data-size="5" title="Choose fabric/s"  multiple>
               <?php
-              $sql_fabric ="Select * from fabrics";
+              $sql_fabric ="Select * from tbl_fabric";
               $sql_fabric_exe = mysqli_query($dbc,$sql_fabric);
               while ($fabricrow =mysqli_fetch_array($sql_fabric_exe, MYSQLI_ASSOC))
               {
-                echo "<option value='".$fabricrow['fabric_id']."' data-tokens='".$fabricrow['fabric']."'>".$fabricrow['fabric']."</option>";
+                ?>
+                <option value="<?php echo $fabricrow['fabric_id'];?>" data-tokens="<?php echo $fabricrow['fabric'];?>" <?php foreach(@$_POST['sltfabric'] as $col){if($col==$fabricrow['fabric_id']){echo "selected";}} ?>><?php echo $fabricrow['fabric'];?></option>
+                <?php
               }
               ?>
               </select>
@@ -473,10 +477,10 @@
             <select class="selectpicker" id="slttype" name="slttype">
               <option value="0">Choose a type..</option>
                 <?php
-                $sql ="Select * from type";
+                $sql ="Select * from tbl_type";
                 $query = mysqli_query($dbc,$sql);
                 while ($row =mysqli_fetch_array($query)) {
-                $id = $row['id'];
+                $id = $row['type_id'];
                 $title = $row['type'];
                 ?>
                 <option value='<?php echo $id;?>' <?php if(@$_POST['slttype']==$id){echo "selected";} ?>><?php echo $title;?></option>";
@@ -485,15 +489,18 @@
                 ?>
             </select>
             <span class="errfrm"><?php echo @$type_err."<br>"; ?></span>
-
+            <div id="fade" class="black_overlay"></div>
                <div class="custom-file-container" data-upload-id="imgf">
                <label>T-Shirt Front <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
                <label class="custom-file-container__custom-file" >
-                   <input type="file" id="uplfimg[]" name="uplfimg" class="custom-file-container__custom-file__custom-file-input">
-                   <span class="custom-file-container__custom-file__custom-file-control"></span>
+                  <input type="file" id="uplfimg[]" name="uplfimg" class="custom-file-container__custom-file__custom-file-input">
+                  <span class="custom-file-container__custom-file__custom-file-control"></span>
                </label>
-                <div id="imgfontprev" class="custom-file-container__image-preview"></div>
-               </div>
+               
+               <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">Image Front Preview</a>
+                <div id="light" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">Close</a></div>
+                </div>
+               
                
               <div class="custom-file-container" data-upload-id="imgb">
               <label>T-Shirt Back <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
@@ -501,7 +508,10 @@
                   <input type="file" id="uplbimg[]" name="uplbimg" class="custom-file-container__custom-file__custom-file-input">
                   <span class="custom-file-container__custom-file__custom-file-control"></span>
               </label>
-               <div id="imgbackprev" class="custom-file-container__image-preview"></div>
+             
+                <a href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='block';document.getElementById('fade').style.display='block'">Image Back Preview</a>
+                <div id="light2" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='none';document.getElementById('fade').style.display='none'">Close</a></div>
+                
               </div>
               
 
@@ -518,7 +528,7 @@
           while ($patternrow =mysqli_fetch_array($sql_pattern_exe, MYSQLI_ASSOC))
           {
             ?>
-            <option data-content="<img src='<?php echo $patternrow['p_img_path']; ?>' width='15px' height='15px'> <?php echo $patternrow['pattern']; ?>" value="<?php echo $patternrow['pattern_id']; ?>" data-tokens="<?php echo $patternrow['pattern'] ?>"></option>;
+            <option data-content="<img src='<?php echo $patternrow['p_img_path']; ?>' width='15px' height='15px'> <?php echo $patternrow['pattern']; ?>" value="<?php echo $patternrow['pattern_id']; ?>" data-tokens="<?php echo $patternrow['pattern'] ?>" <?php foreach(@$_POST['sltpat'] as $col){if($col==$patternrow['pattern_id']){echo "selected";}} ?>></option>;
             <?php
           }
           ?>
@@ -643,7 +653,7 @@
     {
       $addbrand_cc = trim($_POST['txtabrand']);
       $addbrand = mysqli_real_escape_string($dbc, $addbrand_cc);
-      $addbrand_qry = mysqli_query($dbc, "INSERT INTO brands(title) VALUES('$addbrand');");
+      $addbrand_qry = mysqli_query($dbc, "INSERT INTO tbl_brand(brand) VALUES('$addbrand');");
       if($addbrand_qry)
       {
         echo "<meta http-equiv='refresh' content='0'>";
@@ -729,7 +739,7 @@ if(isset($_POST['btnacat']))
 {
   $addcat_cc = $_POST['txtacat'];
   $addcat = mysqli_real_escape_string($dbc, $addcat_cc);
-  $addcat_qry = mysqli_query($dbc, "INSERT INTO category(title) VALUES('$addcat');");
+  $addcat_qry = mysqli_query($dbc, "INSERT INTO tbl_category(cat_name) VALUES('$addcat');");
   if($addcat_qry)
   {
     echo "<meta http-equiv='refresh' content='0'>";
@@ -988,7 +998,7 @@ if(isset($_POST['btnafeature']))
 {
   $addfeature_cc = $_POST['txtafeature'];
   $addfeature = mysqli_real_escape_string($dbc, $addfeature_cc);
-  $addfeature_qry = mysqli_query($dbc, "INSERT INTO features(feature) VALUES('$addfeature');");
+  $addfeature_qry = mysqli_query($dbc, "INSERT INTO tbl_feature(feature) VALUES('$addfeature');");
   if($addfeature_qry)
   {
     echo "<meta http-equiv='refresh' content='0'>";
@@ -1073,7 +1083,7 @@ if(isset($_POST['btnafabric']))
 {
   $addfabric_cc = $_POST['txtafabric'];
   $addfabric = mysqli_real_escape_string($dbc, $addfabric_cc);
-  $addfabric_qry = mysqli_query($dbc, "INSERT INTO fabrics(fabric) VALUES('$addfabric');");
+  $addfabric_qry = mysqli_query($dbc, "INSERT INTO tbl_fabric(fabric) VALUES('$addfabric');");
   if($addfabric_qry)
   {
     echo "<meta http-equiv='refresh' content='0'>";
@@ -1282,7 +1292,7 @@ if($check_num == 0)
     <script src="../js/file-upload-with-preview.js"></script>
     <script>
       var upload1 = new FileUploadWithPreview('imgf');
-      var upload1 = new FileUploadWithPreview('imgb');
+      var upload2 = new FileUploadWithPreview('imgb');
     </script>
     <?php require('../includes/admin_footer.php'); ?>
   </body>

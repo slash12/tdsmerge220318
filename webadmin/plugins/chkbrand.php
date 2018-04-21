@@ -3,7 +3,7 @@
   $addbrand = $_POST["add_brand"];
   if(isset($addbrand))
   {
-    $sql ="SELECT * FROM brands WHERE title ='$addbrand';";
+    $sql ="SELECT * FROM tbl_brand WHERE brand ='$addbrand';";
     $res = mysqli_query($dbc, $sql);
     if(mysqli_num_rows($res) > 0)
     {

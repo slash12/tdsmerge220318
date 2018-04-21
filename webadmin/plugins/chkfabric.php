@@ -3,7 +3,7 @@
   $addfabric = $_POST["add_fabric"];
   if(isset($addfabric))
   {
-    $sql ="SELECT * FROM fabrics WHERE fabric ='$addfabric';";
+    $sql ="SELECT * FROM tbl_fabric WHERE fabric ='$addfabric';";
     $res_fabric = mysqli_query($dbc, $sql);
     if(mysqli_num_rows($res_fabric) > 0)
     {
