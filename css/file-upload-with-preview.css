@@ -6,7 +6,7 @@
     box-sizing: border-box;
     position: relative;
     display: inline-block;
-    width: 100%;
+    width: 86%;
     height: calc(2.25rem + 2px);
     margin-bottom: 0;
     margin-top: 5px; }
@@ -35,7 +35,9 @@
       background-color: #fff;
       background-clip: padding-box;
       border: 1px solid #c0c0af;
-      border-radius: .25rem; }
+      border-radius: .25rem;
+      width:85%
+    }
     .custom-file-container__custom-file__custom-file-control:empty::after {
       box-sizing: border-box;
       content: "Choose file..."; }

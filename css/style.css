@@ -47,8 +47,8 @@ background-image:url('../images/header_footer.jpg');
 	position: absolute;
 	top: 0%;
 	left: -100%;
-	width: 300%;
-	height: 300%;
+	width: 200%;
+	height: 100%;
 	background-color: black;
 	z-index:1001;
 	-moz-opacity: 0.8;
@@ -61,10 +61,10 @@ background-image:url('../images/header_footer.jpg');
   {
 	display: none;
 	position: absolute;
-	top: -100%;
+	top: -190%;
 	left: -80%;
-	width: 1000px;
-	height: 600px;
+	width: 800px;
+	height: 400px;
 	padding: 16px;
 	border: 16px solid orange;
 	background-color: white;
@@ -78,10 +78,10 @@ background-image:url('../images/header_footer.jpg');
 {
 display: none;
 position: absolute;
-top: -200%;
+top: -300%;
 left: -80%;
-width: 1000px;
-height: 600px;
+width: 800px;
+height: 400px;
 padding: 16px;
 border: 16px solid orange;
 background-color: white;
@@ -209,6 +209,29 @@ background-image: url('../images/send.jpg');
 #setting_form th
 {
   text-align: center;
+}
+
+#adshirttbl td
+{
+  text-align:left; 
+  vertical-align:middle;
+  /* border:1px solid black; */
+}
+
+span.glyphicon
+{
+  font-weight: 900 !important;
+  font-size: 16px !important;
+}
+
+.tdadjust
+{
+  padding-bottom: 2%
+}
+
+.tdcoladjust
+{
+  padding-left:4%;
 }
 
 #setting_form td

@@ -22,12 +22,12 @@ error_reporting(E_ALL & ~E_WARNING);
      $('.selectpicker').selectpicker();
     });
     </script>
-
+  
   </head>
   <body>
     <?php require('../includes/admin_navbar.php'); ?>
       
-
+<!-- Form Validation PHP-->
       <?php
         if(isset($_POST['btnsubas']))
         {
@@ -74,7 +74,7 @@ error_reporting(E_ALL & ~E_WARNING);
           if($type_cc == "0")
           {
             $arr_err[] = "Please choose a type";
-            $type_err = "<br>Please choose a type";
+            $type_err = "Please choose a type";
           }
           else
           {
@@ -183,7 +183,7 @@ error_reporting(E_ALL & ~E_WARNING);
           if($size_cc == "0")
           {
             $arr_err[] = "Please choose a size";
-            $size_err = "<br>Please choose a size";
+            $size_err = "Please choose a size";
           }
           else
           {
@@ -210,19 +210,19 @@ error_reporting(E_ALL & ~E_WARNING);
           @$color_cc = $_POST["ddcolor"];
             if(empty($color_cc))
               {
-                $color_err = "<br>Please select a color";
+                $color_err = "Please select a color";
               }
 
             @$features_cc = $_POST['sltfeature'];
             if(empty($features_cc))
               {
-                $features_err = "<br>Please select a feature";
+                $features_err = "Please select a feature";
               }
 
             $fabric_cc = @$_POST['sltfabric'];
             if(empty($fabric_cc))
               {
-                $fabric_err = "<br>Please select a fabric";
+                $fabric_err = "Please select a fabric";
               }
 
             $pattern_cc = @$_POST['sltpat'];
@@ -345,136 +345,130 @@ error_reporting(E_ALL & ~E_WARNING);
           }
         }
       ?>
+<!--/Form Validation PHP-->
+
+<!--Form Frontend-->
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data" >
           <div class="container-fluid">
-            <div class="row">
-              <div class="col-sm">
-
-                <!--Brands-->
-                  <label for="Brands">Brands</label>
-                  <select class="selectpicker" id="sltbrand" name="sltbrand">
-                    <option value="0">Choose a brand..</option>
-                    <?php
-                    $sql ="Select * from tbl_brand";
-                    $query = mysqli_query($dbc,$sql);
-                    while ($row =mysqli_fetch_array($query)) {
-                      $brand_id = $row['brand_id'];
-                      $brand = $row['brand'];
-                      ?>
-                      <option value='<?php echo $brand_id;?>' <?php if(@$_POST['sltbrand']==$brand_id){echo 'selected';} ?>><?php echo $brand;?></option>";
-                      <?php
-                    }
-                    ?>
-                  </select>
-                  <!-- Brand modal Trigger Button -->
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#brandmodal">Add Brand</button>
-
-                  <span class="errfrm"><?php echo @$brand_err."<br>"; ?></span>
-
-                <!--Category-->
-                <label for="Category">Category</label>
-                <select class="selectpicker" id="sltcat" name="sltcat" data-width="201px">
-                  <option value="0">Choose a category..</option>
-                  <?php
-                  $sql ="Select * from tbl_category";
-                  $query = mysqli_query($dbc,$sql);
-                  while ($row =mysqli_fetch_array($query)) {
-                    $cat_id = $row['cat_id'];
-                    $category = $row['cat_name'];
-                    ?>
-                    <option value='<?php echo $cat_id; ?>' <?php if(@$_POST['sltcat']==$cat_id){echo 'selected';} ?>><?php echo $category; ?></option>";
-                    <?php
-                  }
-                  ?>
-                </select>
-
-                <!-- Category modal Trigger Button -->
-                  <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#catmodal">Add Category</button>
-
-
-                <span class="errfrm"><?php echo @$cat_err."<br>"; ?></span>
-
-              <!--Colour-->
-                <label class="mr-sm-2" for="Color">Color</label>
-                <select id="ddcolor" name="ddcolor[]" class="selectpicker" data-live-search="true" data-size="5" title="Choose a Color/s"  multiple>
-                  <?php
-                    $sql_color = "SELECT * FROM tbl_color;";
-                    $sql_color_exe = mysqli_query($dbc, $sql_color);
-
-                    while($colrow = mysqli_fetch_array($sql_color_exe, MYSQLI_ASSOC))
-                    {?>
-                        <option value="<?php echo $colrow['color_id']?>" data-tokens="<?php echo $colrow['color'];?>" data-subtext="<?php echo $colrow['color_code'];?>" style='background:<?php echo $colrow['color_code'];?>; color: black;' <?php foreach(@$_POST['ddcolor'] as $col){if($col==$colrow['color_id']){echo "selected";}} ?>><?php echo $colrow['color'];?></option>;
-                      <?php
-                    }
-                  ?>
-                </select>
-
-                <!-- Color modal Trigger Button -->
-                  <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#colormodal">Add Color</button>
-
-                <span class="errfrm"><?php echo @$color_err."<br>"; ?></span>
-
-                <!--Design-->
-                <label for="Design">Design</label>
-                <select class="selectpicker" id="sltdesign" name="sltdesign" data-live-search="true" data-size="5" >
-                  <option value="0" selected>Choose Design..</option>
-                  <?php
-                  $sql_design ="Select * from tbl_design;";
-                  $sql_design_exe = mysqli_query($dbc,$sql_design);
-                  while ($designrow =mysqli_fetch_array($sql_design_exe, MYSQLI_ASSOC))
-                  {
-                    ?>
-                    <option value='<?php echo $designrow['design_id'];?>' data-tokens='<?php echo $designrow['design'];?>' <?php if(@$_POST['sltdesign'] == $designrow['design_id']){echo "selected";}?>><?php echo $designrow['design'];?></option>;
-                    <?php
-                  }
-                  ?>
-                </select>
-                <!-- Design modal Trigger Button -->
-                  <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#designmodal">Add Design</button>
-                <span class="errfrm"><?php echo "<br>".@$design_err."<br>"; ?></span>
-
-
-                  <!--features-->
-                  <label class="mr-sm-2" for="Features">Features</label>
-                  <select class="selectpicker" id="sltfeature" data-width="201px" name="sltfeature[]" data-live-search="true" data-size="5" title="Choose feature/s"  multiple>
-                    <?php
-                    $sql_feature ="Select * from tbl_feature;";
-                    $sql_feature_exe = mysqli_query($dbc,$sql_feature);
-                    while ($featurerow =mysqli_fetch_array($sql_feature_exe))
-                    {
-                      ?>
-                      <option value="<?php echo $featurerow['feature_id'];?>" data-tokens="<?php echo $featurerow['feature'];?>" <?php foreach(@$_POST['sltfeature'] as $col){if($col==$featurerow['feature_id']){echo "selected";}} ?>><?php echo $featurerow['feature'];?></option>;
-                      <?php
-                    }
-                    ?>
-                  </select>
-                  <!-- Features modal Trigger Button -->
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#featuresmodal">Add Feature</button>
-                  <span class="errfrm"><?php echo @$features_err; ?> </span>
-                </div>
-
-            <!--Fabric-->
-              <div class="col-sm">
-              <label class="mr-sm-2" for="Fabrics">Fabrics</label>
-              <select class="selectpicker" id="sltfabric" name="sltfabric[]" data-live-search="true" data-size="5" title="Choose fabric/s"  multiple>
+            <!-- <div class="row"> -->
+              <!-- <div class="col-sm"> -->
+  <table id="adshirttbl" class="table-responsive">
+    <tr>
+      <td>
+        <!--Brand Field-->
+          <!--Brands-->
+            <label for="Brands">Brands</label>
+          </td>
+          <td>
+            <select class="selectpicker" id="sltbrand" name="sltbrand" data-width="201px">
+              <option value="0">Choose a brand..</option>
               <?php
-              $sql_fabric ="Select * from tbl_fabric";
-              $sql_fabric_exe = mysqli_query($dbc,$sql_fabric);
-              while ($fabricrow =mysqli_fetch_array($sql_fabric_exe, MYSQLI_ASSOC))
+              $sql ="Select * from tbl_brand";
+              $query = mysqli_query($dbc,$sql);
+              while ($row =mysqli_fetch_array($query)) {
+                $brand_id = $row['brand_id'];
+                $brand = $row['brand'];
+                ?>
+                <option value='<?php echo $brand_id;?>' <?php if(@$_POST['sltbrand']==$brand_id){echo 'selected';} ?>><?php echo $brand;?></option>";
+                <?php
+              }
+              ?>
+            </select>
+            <!-- Brand modal Trigger Button -->
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#brandmodal"><span class="glyphicon">&#x2b;</span></button>
+        <!--/Brand Field-->
+      </td>
+      
+      <td class="tdcoladjust">
+        <!--Fabric Field-->
+          <!--Fabric-->
+          <!-- <div class="col-sm"> -->
+            <label class="mr-sm-2" for="Fabrics">Fabrics</label>
+          </td>
+          <td>
+            <select class="selectpicker" id="sltfabric" name="sltfabric[]" data-live-search="true" data-size="5" title="Choose fabric/s" data-width="201px"  multiple>
+            <?php
+            $sql_fabric ="Select * from tbl_fabric";
+            $sql_fabric_exe = mysqli_query($dbc,$sql_fabric);
+            while ($fabricrow =mysqli_fetch_array($sql_fabric_exe, MYSQLI_ASSOC))
+            {
+              ?>
+              <option value="<?php echo $fabricrow['fabric_id'];?>" data-tokens="<?php echo $fabricrow['fabric'];?>" <?php foreach(@$_POST['sltfabric'] as $col){if($col==$fabricrow['fabric_id']){echo "selected";}} ?>><?php echo $fabricrow['fabric'];?></option>
+              <?php
+            }
+            ?>
+            </select>
+            <!-- Fabric modal Trigger Button -->
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#fabricmodal"><span class="glyphicon">&#x2b;</span></button>
+        <!--Fabric Field-->
+      </td>
+      
+      <td>
+        <!--Pattern Field-->
+            <!-- <div class="col-sm"> -->
+            <!--Pattern-->
+              <label for="Pattern">Pattern</label>
+              </td>
+              <td>
+              <select class="selectpicker icon-menus" title="Select a pattern" id="sltpat" name="sltpat[]" data-live-search="true" data-size="5" data-width="201px" multiple>
+              <?php
+              $sql_pattern ="Select * from tbl_pattern;";
+              $sql_pattern_exe = mysqli_query($dbc,$sql_pattern);
+              while ($patternrow =mysqli_fetch_array($sql_pattern_exe, MYSQLI_ASSOC))
               {
                 ?>
-                <option value="<?php echo $fabricrow['fabric_id'];?>" data-tokens="<?php echo $fabricrow['fabric'];?>" <?php foreach(@$_POST['sltfabric'] as $col){if($col==$fabricrow['fabric_id']){echo "selected";}} ?>><?php echo $fabricrow['fabric'];?></option>
+                <option data-content="<img src='<?php echo $patternrow['p_img_path']; ?>' width='15px' height='15px'> <?php echo $patternrow['pattern']; ?>" value="<?php echo $patternrow['pattern_id']; ?>" data-tokens="<?php echo $patternrow['pattern'] ?>" <?php foreach(@$_POST['sltpat'] as $col){if($col==$patternrow['pattern_id']){echo "selected";}} ?>></option>;
                 <?php
               }
               ?>
               </select>
-              <!-- Fabric modal Trigger Button -->
-                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#fabricmodal">Add Fabric</button>
-              <span class="errfrm"><?php echo @$fabric_err."<br>"; ?></span>
+              <!-- Pattern modal Trigger Button -->
+              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#patternmodal"><span class="glyphicon">&#x2b;</span></button>
+        <!--/Pattern Field-->
+      </td>
+    </tr>
 
+    <tr>
+    <!--Error Msgs-->
+      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$brand_err; ?></span></td>
+      <td colspan="2" class="tdadjust tdcoladjust"><span class="errfrm"><?php echo @$fabric_err; ?></span></td>
+      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$pattern_err; ?> </span></td>
+    <!--/Error Msgs-->
+    </tr>
+    
+    <tr>
+      <td>
+        <!--Category Field-->
+            <!--Category-->
+              <label for="Category">Category</label>
+              </td>
+              <td>
+              <select class="selectpicker" id="sltcat" name="sltcat" data-width="201px">
+                <option value="0">Choose a category..</option>
+                <?php
+                $sql ="Select * from tbl_category";
+                $query = mysqli_query($dbc,$sql);
+                while ($row =mysqli_fetch_array($query)) {
+                  $cat_id = $row['cat_id'];
+                  $category = $row['cat_name'];
+                  ?>
+                  <option value='<?php echo $cat_id; ?>' <?php if(@$_POST['sltcat']==$cat_id){echo 'selected';} ?>><?php echo $category; ?></option>";
+                  <?php
+                }
+                ?>
+              </select>
+              <!-- Category modal Trigger Button -->
+              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#catmodal"><span class="glyphicon">&#x2b;</span></button>
+        <!--/Category Field-->
+      </td>
+      
+      <td class="tdcoladjust">
+        <!--Type Field-->
             <!--Type-->
             <label for="Type">Type</label>
-            <select class="selectpicker" id="slttype" name="slttype">
+            </td>
+            <td>
+            <select class="selectpicker" id="slttype" name="slttype" data-width="201px">
               <option value="0">Choose a type..</option>
                 <?php
                 $sql ="Select * from tbl_type";
@@ -488,63 +482,16 @@ error_reporting(E_ALL & ~E_WARNING);
                 }
                 ?>
             </select>
-            <span class="errfrm"><?php echo @$type_err."<br>"; ?></span>
-            <div id="fade" class="black_overlay"></div>
-               <div class="custom-file-container" data-upload-id="imgf">
-               <label>T-Shirt Front <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
-               <label class="custom-file-container__custom-file" >
-                  <input type="file" id="uplfimg[]" name="uplfimg" class="custom-file-container__custom-file__custom-file-input">
-                  <span class="custom-file-container__custom-file__custom-file-control"></span>
-               </label>
-               
-               <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">Image Front Preview</a>
-                <div id="light" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">Close</a></div>
-                </div>
-               
-               
-              <div class="custom-file-container" data-upload-id="imgb">
-              <label>T-Shirt Back <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
-              <label class="custom-file-container__custom-file" >
-                  <input type="file" id="uplbimg[]" name="uplbimg" class="custom-file-container__custom-file__custom-file-input">
-                  <span class="custom-file-container__custom-file__custom-file-control"></span>
-              </label>
-             
-                <a href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='block';document.getElementById('fade').style.display='block'">Image Back Preview</a>
-                <div id="light2" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='none';document.getElementById('fade').style.display='none'">Close</a></div>
-                
-              </div>
-              
+        <!--/Type Field-->
+      </td>
 
-    </div>
-
-
-      <div class="col-sm">
-          <!--Pattern-->
-          <label for="Pattern">Pattern</label>
-          <select class="selectpicker icon-menus" title="Select a pattern" id="sltpat" name="sltpat[]" data-live-search="true" data-size="5" multiple>
-          <?php
-          $sql_pattern ="Select * from tbl_pattern;";
-          $sql_pattern_exe = mysqli_query($dbc,$sql_pattern);
-          while ($patternrow =mysqli_fetch_array($sql_pattern_exe, MYSQLI_ASSOC))
-          {
-            ?>
-            <option data-content="<img src='<?php echo $patternrow['p_img_path']; ?>' width='15px' height='15px'> <?php echo $patternrow['pattern']; ?>" value="<?php echo $patternrow['pattern_id']; ?>" data-tokens="<?php echo $patternrow['pattern'] ?>" <?php foreach(@$_POST['sltpat'] as $col){if($col==$patternrow['pattern_id']){echo "selected";}} ?>></option>;
-            <?php
-          }
-          ?>
-          </select>
-          <!-- Fabric modal Trigger Button -->
-          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#patternmodal">Add Pattern</button>
-          <span class="errfrm"><?php echo @$pattern_err."<br>"; ?> </span>
-
-          <!--Price-->
-          <label for="Price">Price</label>
-          <input type="type" name="txtprice" id="txtprice" class="form-control" placeholder="Price" value="<?php if(!empty(@$_POST['txtprice'])){echo @$_POST['txtprice'];} ?>">
-          <span class="errfrm"><?php echo @$price_err."<br>"; ?> </span>
-
+      <td>
+        <!--Size Field-->
           <!--Size-->
           <label for="size">Size</label>
-          <select class="selectpicker" id="sltsize" name="sltsize" >
+          </td>
+          <td>
+          <select class="selectpicker" id="sltsize" name="sltsize" data-width="201px">
             <option value="0">Choose a Size...</option>
             <?php
             $sql ="Select * from tbl_size";
@@ -558,742 +505,1044 @@ error_reporting(E_ALL & ~E_WARNING);
             }
             ?>
           </select>
-          <span class="errfrm"><?php echo @$size_err."<br>"; ?></span>
+          <!-- Size modal Trigger Button -->
+          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#sizemodal"><span class="glyphicon">&#x2b;</span></button>
+        <!--/size Field-->
+      </td>
 
+    </tr>
+
+    <tr>
+    <!--Error Msgs-->
+      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$cat_err; ?></span></td>
+      <td colspan="2" class="tdadjust tdcoladjust"><span class="errfrm"><?php echo @$type_err; ?></span></td>
+      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$size_err; ?></span></td>
+    <!--/Error Msgs-->
+    </tr>
+
+    <tr>
+      <td>
+        <!--Color Field-->
+          <!--Colour-->
+            <label class="mr-sm-2" for="Color">Color</label>
+          </td>
+          <td>
+            <select id="ddcolor" name="ddcolor[]" class="selectpicker" data-live-search="true" data-size="5" title="Choose a Color/s" data-width="201px"  multiple>
+              <?php
+                $sql_color = "SELECT * FROM tbl_color;";
+                $sql_color_exe = mysqli_query($dbc, $sql_color);
+
+                while($colrow = mysqli_fetch_array($sql_color_exe, MYSQLI_ASSOC))
+                {?>
+                    <option value="<?php echo $colrow['color_id']?>" data-tokens="<?php echo $colrow['color'];?>" data-subtext="<?php echo $colrow['color_code'];?>" style='background:<?php echo $colrow['color_code'];?>; color: black;' <?php foreach(@$_POST['ddcolor'] as $col){if($col==$colrow['color_id']){echo "selected";}} ?>><?php echo $colrow['color'];?></option>;
+                  <?php
+                }
+              ?>
+            </select>
+            <!-- Color modal Trigger Button -->
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#colormodal"><span class="glyphicon">&#x2b;</span></button>
+        <!--/Color Field-->
+      </td>
+      
+      <td colspan="2" class="tdcoladjust">
+        <!--Image front Field-->
+          <div id="fade" class="black_overlay"></div>
+            <div class="custom-file-container" data-upload-id="imgf">
+            <label>T-Shirt Front <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+            
+            <label class="custom-file-container__custom-file" >
+                <input type="file" id="uplfimg[]" name="uplfimg" class="custom-file-container__custom-file__custom-file-input">
+                <span class="custom-file-container__custom-file__custom-file-control"></span>
+            </label>
+            <br>
+            <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">Image Front Preview</a>
+              <div id="light" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">Close</a></div>
+              </div>
+        <!--/Image Front Field-->     
+      </td>
+
+      <td>
+        <!--Price Field-->
+          <!--Price-->
+          <label for="Price">Price</label>
+          </td>
+          <td>
+          <input type="type" name="txtprice" id="txtprice" class="form-control" placeholder="Price" value="<?php if(!empty(@$_POST['txtprice'])){echo @$_POST['txtprice'];} ?>">          
+        <!--/Price Field-->
+      </td>
+    </tr>
+
+    <tr>
+<!--Error Msg -->
+    <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$color_err."<br>"; ?></span></td>
+    <td colspan="2" class="tdadjust">&nbsp;</td>
+    <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$price_err."<br>"; ?> </span></td>
+<!--/Error Msg -->
+    </tr>
+
+    <tr>
+      <td>
+        <!--Design Field-->                 
+          <!--Design-->
+          <label for="Design">Design</label>
+          </td>
+          <td>
+          <select class="selectpicker" id="sltdesign" name="sltdesign" data-live-search="true" data-size="5" data-width="201px">
+            <option value="0" selected>Choose Design..</option>
+            <?php
+            $sql_design ="Select * from tbl_design;";
+            $sql_design_exe = mysqli_query($dbc,$sql_design);
+            while ($designrow =mysqli_fetch_array($sql_design_exe, MYSQLI_ASSOC))
+            {
+              ?>
+              <option value='<?php echo $designrow['design_id'];?>' data-tokens='<?php echo $designrow['design'];?>' <?php if(@$_POST['sltdesign'] == $designrow['design_id']){echo "selected";}?>><?php echo $designrow['design'];?></option>;
+              <?php
+            }
+            ?>
+          </select>
+          <!-- Design modal Trigger Button -->
+          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#designmodal"><span class="glyphicon">&#x2b;</span></button>
+        <!--/Design Field-->
+      </td>
+      
+      <td colspan="2" class="tdcoladjust">
+        <!--Image Back Field-->             
+          <div class="custom-file-container" data-upload-id="imgb">
+                  <label>T-Shirt Back <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+                  <label class="custom-file-container__custom-file" >
+                      <input type="file" id="uplbimg[]" name="uplbimg" class="custom-file-container__custom-file__custom-file-input">
+                      <span class="custom-file-container__custom-file__custom-file-control"></span>
+                  </label>
+                  <br>
+                    <a href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='block';document.getElementById('fade').style.display='block'">Image Back Preview</a>
+                    <div id="light2" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='none';document.getElementById('fade').style.display='none'">Close</a>
+                    </div>
+                  </div>
+          </div>
+        <!--/Image Back Field-->
+      </td>
+      
+      <td>
+        <!--Quantity Field-->
           <!--Quantity-->
           <label for="">Quantity</label>
+          </td>
+          <td>
           <input type="text" name="txtqty" id="txtqty" class="form-control" placeholder="Quantity" value="<?php if(!empty(@$_POST['txtqty'])){echo @$_POST['txtqty'];} ?>">
-          <span class="errfrm"><?php echo @$qty_err."<br>"; ?> </span>
+        <!--/Quantity Field-->
+      </td>
+    </tr>
 
-          <br><br>
-          <script>
-            function clrfrm()
+    <tr>
+<!--Error Msgs-->
+      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$design_err; ?></span></td>
+      <td colspan="2" class="tdadjust">&nbsp;</td>
+      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$qty_err; ?> </span></td>
+<!--/Error Msgs-->
+    </tr>
+
+    <tr>
+      <td>
+        <!--Features Field-->
+          <!--features-->
+          <label class="mr-sm-2" for="Features">Features</label>
+          </td>
+          <td>
+          <select class="selectpicker" id="sltfeature" data-width="201px" name="sltfeature[]" data-live-search="true" data-size="5" title="Choose feature/s"  multiple>
+            <?php
+            $sql_feature ="Select * from tbl_feature;";
+            $sql_feature_exe = mysqli_query($dbc,$sql_feature);
+            while ($featurerow =mysqli_fetch_array($sql_feature_exe))
             {
-              location.reload();
+              ?>
+              <option value="<?php echo $featurerow['feature_id'];?>" data-tokens="<?php echo $featurerow['feature'];?>" <?php foreach(@$_POST['sltfeature'] as $col){if($col==$featurerow['feature_id']){echo "selected";}} ?>><?php echo $featurerow['feature'];?></option>;
+              <?php
             }
-          </script>
+            ?>
+          </select>
+          <!-- Features modal Trigger Button -->
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#featuresmodal"><span class="glyphicon">&#x2b;</span></button>
+          <!-- </div> -->
+        <!--/Features Field-->
+      </td>
+    </tr>
 
-          <!--Submit Button-->
-          <input type="submit" class="btn btn-primary" name="btnsubas" id="btnsubas">
-          <!--Reset Button-->
-          <input class="btn btn-primary" name="btnreset" id="btnreset" type="button" onclick="clrfrm();" value="Reset">
+    <tr>
+<!--Error Msgs-->
+      <td colspan="2"><span class="errfrm"><?php echo @$features_err; ?> </span></td>
+<!--/Error Msgs-->
 
-      </div>
-      </div>
+      <td class="tdcoladjust">
+<!--Button Field-->
+        <!--Submit Button-->
+        <input type="submit" class="btn btn-primary" name="btnsubas" id="btnsubas">
+        </td>
+        <td class="tdcoladjust">
+        <!--Reset Button-->
+        <input class="btn btn-primary" name="btnreset" id="btnreset" type="button" onclick="clrfrm();" value="Reset">
+<!--/Button Field-->
+      </td>
+    </tr>
+        <!--Clear Script Field-->
+                <script>
+                  function clrfrm()
+                  {
+                    location.reload();
+                  }
+                </script>
+        <!--/Clear Script Field-->
+  </table>
+      <!-- </div> -->
+      <!-- </div> -->
     </div>
     </form>
+<!--/Form Frontend-->
 
+<!-- Modals-->
+  <!--Add Brand modal form-->
     <!--Brand Modal Body -->
-    <div class="modal fade" id="brandmodal" tabindex="-1" role="dialog" aria-labelledby="mybrandmodal" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Add Brand</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-              <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">Brand</span>
+      <div class="modal fade" id="brandmodal" tabindex="-1" role="dialog" aria-labelledby="mybrandmodal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Brand</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Brand</span>
+                  </div>
+                  <input type="text" class="form-control" placeholder="Brand.." aria-label="brand" name="txtabrand" id="txtabrand">
+                  <input type="submit" class="btn btn-primary" id="btnabrand" name="btnabrand" Value="Add Brand">
                 </div>
-                <input type="text" class="form-control" placeholder="Brand.." aria-label="brand" name="txtabrand" id="txtabrand">
-                <input type="submit" class="btn btn-primary" id="btnabrand" name="btnabrand" Value="Add Brand">
-              </div>
-              <span id="brand_availability"></span>
-            </form>
+                <span id="brand_availability"></span>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    <!--/Brand Modal Body -->
 
     <!--Brand AJAX Validation (Uniqueness)-->
-    <script>
-      $(document).ready(function(){
-        document.getElementById("btnabrand").disabled = true;
-        $('#txtabrand').blur(function(){
-          var abrand = $(this).val();
-          $.ajax({
-            url: "plugins/chkbrand.php",
-            method: "POST",
-            data: {add_brand:abrand},
-            success:function(html)
-            {
-              if(html == "true")
+      <script>
+        $(document).ready(function(){
+          document.getElementById("btnabrand").disabled = true;
+          $('#txtabrand').blur(function(){
+            var abrand = $(this).val();
+            $.ajax({
+              url: "plugins/chkbrand.php",
+              method: "POST",
+              data: {add_brand:abrand},
+              success:function(html)
               {
-                $('#brand_availability').html('<span class="text-danger">Brand already existed!</span>');
-                document.getElementById("btnabrand").disabled = true;
-              }
-
-              if(html == "false")
-              {
-                if(abrand == "")
+                if(html == "true")
                 {
-                  $('#brand_availability').html('<span class="text-danger">Enter a Brand!</span>');
+                  $('#brand_availability').html('<span class="text-danger">Brand already existed!</span>');
                   document.getElementById("btnabrand").disabled = true;
                 }
-                else
-                {
-                  $('#brand_availability').html('<span></span>');
-                  document.getElementById("btnabrand").disabled = false;
-                }
 
+                if(html == "false")
+                {
+                  if(abrand == "")
+                  {
+                    $('#brand_availability').html('<span class="text-danger">Enter a Brand!</span>');
+                    document.getElementById("btnabrand").disabled = true;
+                  }
+                  else
+                  {
+                    $('#brand_availability').html('<span></span>');
+                    document.getElementById("btnabrand").disabled = false;
+                  }
+
+                }
               }
-            }
+            })
           })
-        })
-      });
-    </script>
+        });
+      </script>
+    <!--/Brand AJAX Validation (Uniqueness)-->
 
     <!--Insert Brand into DB-->
-    <?php
-    if(isset($_POST['btnabrand']))
-    {
-      $addbrand_cc = trim($_POST['txtabrand']);
-      $addbrand = mysqli_real_escape_string($dbc, $addbrand_cc);
-      $addbrand_qry = mysqli_query($dbc, "INSERT INTO tbl_brand(brand) VALUES('$addbrand');");
-      if($addbrand_qry)
+      <?php
+      if(isset($_POST['btnabrand']))
       {
-        echo "<meta http-equiv='refresh' content='0'>";
+        $addbrand_cc = trim($_POST['txtabrand']);
+        $addbrand = mysqli_real_escape_string($dbc, $addbrand_cc);
+        $addbrand_qry = mysqli_query($dbc, "INSERT INTO tbl_brand(brand) VALUES('$addbrand');");
+        if($addbrand_qry)
+        {
+          echo "<meta http-equiv='refresh' content='0'>";
+        }
       }
-    }
-    ?>
+      ?>
+    <!--/Insert Brand into DB-->
+  <!--Add Brand modal form-->
 
-<!--================================================================================================================================================= -->
-<!--Category Modal Body -->
-<div class="modal fade" id="catmodal" tabindex="-1" role="dialog" aria-labelledby="mycatmodal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Category</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Category</span>
+  <!--================================================================================================================================================= -->
+  <!--add Category Modal form -->
+    <!--Category Modal Body -->
+      <div class="modal fade" id="catmodal" tabindex="-1" role="dialog" aria-labelledby="mycatmodal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Category</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-            <input type="text" class="form-control" name="txtacat" id="txtacat" placeholder="Category..">
-            <input type="submit" class="btn btn-primary" name="btnacat" id="btnacat" value="Add Category">
-          </div>
-          <span id="cat_availability"></span>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!--Category AJAX Validation (Uniqueness)-->
-<script>
-  $(document).ready(function(){
-    document.getElementById("btnacat").disabled = true;
-    $('#txtacat').blur(function(){
-      var acat = $(this).val();
-      $.ajax({
-        url: "plugins/chkcat.php",
-        method: "POST",
-        data: {add_cat:acat},
-        success:function(html)
-        {
-          if(html == "true")
-          {
-            if(acat == "")
-            {
-              $('#cat_availability').html('<span class="text-danger">Enter a Category!</span>');
-              document.getElementById("btnacat").disabled = true;
-            }
-            else
-            {
-              $('#cat_availability').html('<span class="text-danger">Category already existed!</span>');
-              document.getElementById("btnacat").disabled = true;
-            }
-          }
-
-          if(html == "false")
-          {
-            if(acat == "")
-            {
-              $('#cat_availability').html('<span class="text-danger">Enter a Category!</span>');
-              document.getElementById("btnacat").disabled = true;
-            }
-            else
-            {
-              $('#cat_availability').html('<span></span>');
-              document.getElementById("btnacat").disabled = false;
-            }
-          }
-        }
-      })
-    })
-  });
-</script>
-
-<!--Insert Category into DB-->
-<?php
-if(isset($_POST['btnacat']))
-{
-  $addcat_cc = $_POST['txtacat'];
-  $addcat = mysqli_real_escape_string($dbc, $addcat_cc);
-  $addcat_qry = mysqli_query($dbc, "INSERT INTO tbl_category(cat_name) VALUES('$addcat');");
-  if($addcat_qry)
-  {
-    echo "<meta http-equiv='refresh' content='0'>";
-  }
-}
-?>
-
-<!--================================================================================================================================================= -->
-<!--Color Modal Body -->
-<div class="modal fade" id="colormodal" tabindex="-1" role="dialog" aria-labelledby="mycolormodal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Color</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Color</span>
+            <div class="modal-body">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Category</span>
+                  </div>
+                  <input type="text" class="form-control" name="txtacat" id="txtacat" placeholder="Category..">
+                  <input type="submit" class="btn btn-primary" name="btnacat" id="btnacat" value="Add Category">
+                </div>
+                <span id="cat_availability"></span>
+              </form>
             </div>
-            <input type="text" class="form-control" name="txtacolor" id="txtacolor" placeholder="Color..">
-            <input type="text" class="form-control" name="txtaccolor" id="txtaccolor" placeholder="Color Code..">
           </div>
-          <input type="submit" class="btn btn-primary" name="btnacolor" id="btnacolor" value="Add Color">
-          <span id="color_availability"></span>
-        </form>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
+    <!--/Category Modal Body -->
 
-<!--Color AJAX Validation (Uniqueness)-->
-<script>
-  $(document).ready(function(){
-    document.getElementById("btnacolor").disabled = true;
-    $('#txtacolor').blur(function(){
-      var acolor = $(this).val();
-      $.ajax({
-        url: "plugins/chkcolor.php",
-        method: "POST",
-        data: {add_color:acolor},
-        success:function(html)
+    <!--Category AJAX Validation (Uniqueness)-->
+      <script>
+        $(document).ready(function(){
+          document.getElementById("btnacat").disabled = true;
+          $('#txtacat').blur(function(){
+            var acat = $(this).val();
+            $.ajax({
+              url: "plugins/chkcat.php",
+              method: "POST",
+              data: {add_cat:acat},
+              success:function(html)
+              {
+                if(html == "true")
+                {
+                  if(acat == "")
+                  {
+                    $('#cat_availability').html('<span class="text-danger">Enter a Category!</span>');
+                    document.getElementById("btnacat").disabled = true;
+                  }
+                  else
+                  {
+                    $('#cat_availability').html('<span class="text-danger">Category already existed!</span>');
+                    document.getElementById("btnacat").disabled = true;
+                  }
+                }
+
+                if(html == "false")
+                {
+                  if(acat == "")
+                  {
+                    $('#cat_availability').html('<span class="text-danger">Enter a Category!</span>');
+                    document.getElementById("btnacat").disabled = true;
+                  }
+                  else
+                  {
+                    $('#cat_availability').html('<span></span>');
+                    document.getElementById("btnacat").disabled = false;
+                  }
+                }
+              }
+            })
+          })
+        });
+      </script>
+    <!--/Category AJAX Validation (Uniqueness)-->
+
+    <!--Insert Category into DB-->
+      <?php
+      if(isset($_POST['btnacat']))
+      {
+        $addcat_cc = $_POST['txtacat'];
+        $addcat = mysqli_real_escape_string($dbc, $addcat_cc);
+        $addcat_qry = mysqli_query($dbc, "INSERT INTO tbl_category(cat_name) VALUES('$addcat');");
+        if($addcat_qry)
         {
-          if(html == "true")
-          {
-            if(acolor == "")
-            {
-              $('#color_availability').html('<span class="text-danger">Enter a Color!</span>');
-              document.getElementById("btnacolor").disabled = true;
-            }
-            else
-            {
-              $('#color_availability').html('<span class="text-danger">Color already existed!</span>');
-              document.getElementById("btnacolor").disabled = true;
-            }
-          }
-
-          if(html == "false")
-          {
-            if(acolor == "")
-            {
-              $('#color_availability').html('<span class="text-danger">Enter a Color!</span>');
-              document.getElementById("btnacolor").disabled = true;
-            }
-            else
-            {
-              $('#color_availability').html('<span></span>');
-              document.getElementById("btnacolor").disabled = false;
-            }
-          }
+          echo "<meta http-equiv='refresh' content='0'>";
         }
-      })
-    })
-  });
-</script>
+      }
+      ?>
+    <!--Insert Category into DB-->
+  <!--add Category Modal form -->
 
-<!--Insert Color into DB-->
-<?php
-if(isset($_POST['btnacolor']))
-{
-  $addcolor_cc = trim($_POST['txtacolor']);
-  $addccolor_cc = trim($_POST['txtaccolor']);
-  $addcolor = mysqli_real_escape_string($dbc, $addcolor_cc);
-  $addccolor = mysqli_real_escape_string($dbc, $addccolor_cc);
-  $addcolor_qry = mysqli_query($dbc, "INSERT INTO tbl_color(color, color_code) VALUES('$addcolor', '$addccolor');");
-  if($addcolor_qry)
-  {
-    echo "<meta http-equiv='refresh' content='0'>";
-  }
-}
-?>
-<!--================================================================================================================================================= -->
-<!--Design Modal Body -->
-<div class="modal fade" id="designmodal" tabindex="-1" role="dialog" aria-labelledby="mydesignmodal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Design</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Design</span>
+  <!--================================================================================================================================================= -->
+  <!--Add Color Modal form -->
+    <!--Color Modal Body -->
+      <div class="modal fade" id="colormodal" tabindex="-1" role="dialog" aria-labelledby="mycolormodal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Color</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-            <input type="text" class="form-control" name="txtadesign" id="txtadesign" placeholder="Design..">
-            <input type="submit" class="btn btn-primary" name="btnadesign" id="btnadesign" value="Add Design">
-          </div>
-          <span id="design_availability"></span>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!--Design AJAX Validation (Uniqueness)-->
-<script>
-  $(document).ready(function(){
-    document.getElementById("btnadesign").disabled = true;
-    $('#txtadesign').blur(function(){
-      var adesign = $(this).val();
-      $.ajax({
-        url: "plugins/chkdesign.php",
-        method: "POST",
-        data: {add_design:adesign},
-        success:function(html)
-        {
-          if(html == "true")
-          {
-            if(adesign == "")
-            {
-              $('#design_availability').html('<span class="text-danger">Enter a Design!</span>');
-              document.getElementById("btnadesign").disabled = true;
-            }
-            else
-            {
-              $('#design_availability').html('<span class="text-danger">Design already existed!</span>');
-              document.getElementById("btnadesign").disabled = true;
-            }
-          }
-
-          if(html == "false")
-          {
-            if(adesign == "")
-            {
-              $('#design_availability').html('<span class="text-danger">Enter a Design!</span>');
-              document.getElementById("btnadesign").disabled = true;
-            }
-            else
-            {
-              $('#design_availability').html('<span></span>');
-              document.getElementById("btnadesign").disabled = false;
-            }
-          }
-        }
-      })
-    })
-  });
-</script>
-
-<!--Insert Design into DB-->
-<?php
-if(isset($_POST['btnadesign']))
-{
-  $adddesign_cc = $_POST['txtadesign'];
-  $adddesign = mysqli_real_escape_string($dbc, $adddesign_cc);
-  $adddesign_qry = mysqli_query($dbc, "INSERT INTO tbl_design(design) VALUES('$adddesign');");
-  if($adddesign_qry)
-  {
-    echo "<meta http-equiv='refresh' content='0'>";
-  }
-}
-?>
-<!--================================================================================================================================================= -->
-<!--Features Modal Body -->
-<div class="modal fade" id="featuresmodal" tabindex="-1" role="dialog" aria-labelledby="myfeaturesmodal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Feature</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Feature</span>
+            <div class="modal-body">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Color</span>
+                  </div>
+                  <input type="text" class="form-control" name="txtacolor" id="txtacolor" placeholder="Color..">
+                  <input type="text" class="form-control" name="txtaccolor" id="txtaccolor" placeholder="Color Code..">
+                </div>
+                <input type="submit" class="btn btn-primary" name="btnacolor" id="btnacolor" value="Add Color">
+                <span id="color_availability"></span>
+              </form>
             </div>
-            <input type="text" class="form-control" name="txtafeature" id="txtafeature" placeholder="Feature..">
-            <input type="submit" class="btn btn-primary" name="btnafeature" id="btnafeature" value="Add Feature">
           </div>
-          <span id="feature_availability"></span>
-        </form>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
+    <!--/Color Modal Body -->
 
-<!--Feature AJAX Validation (Uniqueness)-->
-<script>
-  $(document).ready(function(){
-    document.getElementById("btnafeature").disabled = true;
-    $('#txtafeature').blur(function(){
-      var afeature = $(this).val();
-      $.ajax({
-        url: "plugins/chkfeature.php",
-        method: "POST",
-        data: {add_feature:afeature},
-        success:function(html)
+    <!--Color AJAX Validation (Uniqueness)-->
+      <script>
+        $(document).ready(function(){
+          document.getElementById("btnacolor").disabled = true;
+          $('#txtacolor').blur(function(){
+            var acolor = $(this).val();
+            $.ajax({
+              url: "plugins/chkcolor.php",
+              method: "POST",
+              data: {add_color:acolor},
+              success:function(html)
+              {
+                if(html == "true")
+                {
+                  if(acolor == "")
+                  {
+                    $('#color_availability').html('<span class="text-danger">Enter a Color!</span>');
+                    document.getElementById("btnacolor").disabled = true;
+                  }
+                  else
+                  {
+                    $('#color_availability').html('<span class="text-danger">Color already existed!</span>');
+                    document.getElementById("btnacolor").disabled = true;
+                  }
+                }
+
+                if(html == "false")
+                {
+                  if(acolor == "")
+                  {
+                    $('#color_availability').html('<span class="text-danger">Enter a Color!</span>');
+                    document.getElementById("btnacolor").disabled = true;
+                  }
+                  else
+                  {
+                    $('#color_availability').html('<span></span>');
+                    document.getElementById("btnacolor").disabled = false;
+                  }
+                }
+              }
+            })
+          })
+        });
+      </script>
+    <!--Color AJAX Validation (Uniqueness)-->
+
+    <!--Insert Color into DB-->
+      <?php
+      if(isset($_POST['btnacolor']))
+      {
+        $addcolor_cc = trim($_POST['txtacolor']);
+        $addccolor_cc = trim($_POST['txtaccolor']);
+        $addcolor = mysqli_real_escape_string($dbc, $addcolor_cc);
+        $addccolor = mysqli_real_escape_string($dbc, $addccolor_cc);
+        $addcolor_qry = mysqli_query($dbc, "INSERT INTO tbl_color(color, color_code) VALUES('$addcolor', '$addccolor');");
+        if($addcolor_qry)
         {
-          if(html == "true")
-          {
-            if(afeature == "")
-            {
-              $('#feature_availability').html('<span class="text-danger">Enter a Feature!</span>');
-              document.getElementById("btnafeature").disabled = true;
-            }
-            else
-            {
-              $('#feature_availability').html('<span class="text-danger">Feature already existed!</span>');
-              document.getElementById("btnafeature").disabled = true;
-            }
-          }
-
-          if(html == "false")
-          {
-            if(afeature == "")
-            {
-              $('#feature_availability').html('<span class="text-danger">Enter a Feature!</span>');
-              document.getElementById("btnafeature").disabled = true;
-            }
-            else
-            {
-              $('#feature_availability').html('<span></span>');
-              document.getElementById("btnafeature").disabled = false;
-            }
-          }
+          echo "<meta http-equiv='refresh' content='0'>";
         }
-      })
-    })
-  });
-</script>
+      }
+      ?>
+    <!--Insert Color into DB-->
+  <!--Add Color Modal form -->
 
-<!--Insert Feature into DB-->
-<?php
-if(isset($_POST['btnafeature']))
-{
-  $addfeature_cc = $_POST['txtafeature'];
-  $addfeature = mysqli_real_escape_string($dbc, $addfeature_cc);
-  $addfeature_qry = mysqli_query($dbc, "INSERT INTO tbl_feature(feature) VALUES('$addfeature');");
-  if($addfeature_qry)
-  {
-    echo "<meta http-equiv='refresh' content='0'>";
-  }
-}
-?>
-<!--================================================================================================================================================= -->
-<!--fabric Modal Body -->
-<div class="modal fade" id="fabricmodal" tabindex="-1" role="dialog" aria-labelledby="myfabricmodal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Fabric</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Fabric</span>
+  <!--================================================================================================================================================= -->
+  <!--add Design Modal form -->
+    <!--Design Modal Body -->
+      <div class="modal fade" id="designmodal" tabindex="-1" role="dialog" aria-labelledby="mydesignmodal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Design</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-            <input type="text" class="form-control" name="txtafabric" id="txtafabric" placeholder="Fabric..">
-            <input type="submit" class="btn btn-primary" name="btnafabric" id="btnafabric" value="Add Fabric">
-          </div>
-          <span id="fabric_availability"></span>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!--Fabric AJAX Validation (Uniqueness)-->
-<script>
-  $(document).ready(function(){
-    document.getElementById("btnafabric").disabled = true;
-    $('#txtafabric').blur(function(){
-      var afabric = $(this).val();
-      $.ajax({
-        url: "plugins/chkfabric.php",
-        method: "POST",
-        data: {add_fabric:afabric},
-        success:function(html)
-        {
-          if(html == "true")
-          {
-            if(afabric == "")
-            {
-              $('#fabric_availability').html('<span class="text-danger">Enter a Fabric!</span>');
-              document.getElementById("btnafabric").disabled = true;
-            }
-            else
-            {
-              $('#fabric_availability').html('<span class="text-danger">Fabric already existed!</span>');
-              document.getElementById("btnafabric").disabled = true;
-            }
-          }
-
-          if(html == "false")
-          {
-            if(afabric == "")
-            {
-              $('#fabric_availability').html('<span class="text-danger">Enter a Fabric!</span>');
-              document.getElementById("btnafabric").disabled = true;
-            }
-            else
-            {
-              $('#fabric_availability').html('<span></span>');
-              document.getElementById("btnafabric").disabled = false;
-            }
-          }
-        }
-      })
-    })
-  });
-</script>
-
-<!--Insert Fabric into DB-->
-<?php
-if(isset($_POST['btnafabric']))
-{
-  $addfabric_cc = $_POST['txtafabric'];
-  $addfabric = mysqli_real_escape_string($dbc, $addfabric_cc);
-  $addfabric_qry = mysqli_query($dbc, "INSERT INTO tbl_fabric(fabric) VALUES('$addfabric');");
-  if($addfabric_qry)
-  {
-    echo "<meta http-equiv='refresh' content='0'>";
-  }
-}
-?>
-<!--================================================================================================================================================= -->
-<!--Pattern Modal Body -->
-<div class="modal fade" id="patternmodal" tabindex="-1" role="dialog" aria-labelledby="mypatternmodal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Pattern</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Pattern</span>
+            <div class="modal-body">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Design</span>
+                  </div>
+                  <input type="text" class="form-control" name="txtadesign" id="txtadesign" placeholder="Design..">
+                  <input type="submit" class="btn btn-primary" name="btnadesign" id="btnadesign" value="Add Design">
+                </div>
+                <span id="design_availability"></span>
+              </form>
             </div>
-            <input type="text" class="form-control" name="txtapattern" id="txtapattern" placeholder="Pattern..">
-            <input type="file" id="uplpatimg" name="uplpatimg">
           </div>
-          <span id="pattern_availability"></span>
-          <input type="submit" class="btn btn-primary" name="btnapattern" id="btnapattern" value="Add Pattern">
-        </form>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
+    <!--/Design Modal Body -->
 
-<!--Pattern AJAX Validation (Uniqueness)-->
-<script>
-  $(document).ready(function(){
-    document.getElementById("btnapattern").disabled = true;
-    $('#txtapattern').blur(function(){
-      var apattern = $(this).val();
-      $.ajax({
-        url: "plugins/chkpattern.php",
-        method: "POST",
-        data: {add_pattern:apattern},
-        success:function(html)
+    <!--Design AJAX Validation (Uniqueness)-->
+      <script>
+        $(document).ready(function(){
+          document.getElementById("btnadesign").disabled = true;
+          $('#txtadesign').blur(function(){
+            var adesign = $(this).val();
+            $.ajax({
+              url: "plugins/chkdesign.php",
+              method: "POST",
+              data: {add_design:adesign},
+              success:function(html)
+              {
+                if(html == "true")
+                {
+                  if(adesign == "")
+                  {
+                    $('#design_availability').html('<span class="text-danger">Enter a Design!</span>');
+                    document.getElementById("btnadesign").disabled = true;
+                  }
+                  else
+                  {
+                    $('#design_availability').html('<span class="text-danger">Design already existed!</span>');
+                    document.getElementById("btnadesign").disabled = true;
+                  }
+                }
+
+                if(html == "false")
+                {
+                  if(adesign == "")
+                  {
+                    $('#design_availability').html('<span class="text-danger">Enter a Design!</span>');
+                    document.getElementById("btnadesign").disabled = true;
+                  }
+                  else
+                  {
+                    $('#design_availability').html('<span></span>');
+                    document.getElementById("btnadesign").disabled = false;
+                  }
+                }
+              }
+            })
+          })
+        });
+      </script>
+    <!--/Design AJAX Validation (Uniqueness)-->
+
+    <!--Insert Design into DB-->
+      <?php
+      if(isset($_POST['btnadesign']))
+      {
+        $adddesign_cc = $_POST['txtadesign'];
+        $adddesign = mysqli_real_escape_string($dbc, $adddesign_cc);
+        $adddesign_qry = mysqli_query($dbc, "INSERT INTO tbl_design(design) VALUES('$adddesign');");
+        if($adddesign_qry)
         {
-          if(html == "true")
-          {
-            if(apattern == "")
-            {
-              $('#pattern_availability').html('<span class="text-danger">Enter a Pattern!</span>');
-              document.getElementById("btnapattern").disabled = true;
-            }
-            else
-            {
-              $('#pattern_availability').html('<span class="text-danger">Pattern already existed!</span>');
-              document.getElementById("btnapattern").disabled = true;
-            }
-          }
-
-          if(html == "false")
-          {
-            if(apattern == "")
-            {
-              $('#pattern_availability').html('<span class="text-danger">Enter a Pattern!</span>');
-              document.getElementById("btnapattern").disabled = true;
-            }
-            else
-            {
-              $('#pattern_availability').html('<span></span>');
-              document.getElementById("btnapattern").disabled = false;
-            }
-          }
+          echo "<meta http-equiv='refresh' content='0'>";
         }
-      })
-    })
-  });
-</script>
+      }
+      ?>
+    <!--/Insert Design into DB-->
+  <!--add Design Modal form -->
 
-<!--Insert Pattern into DB-->
-<?php
-if(isset($_POST['btnapattern']))
-{
-  //Pattern Add image Validation
-$check_num = 0;
-$target_dir_pat = "../images/tshirt_pattern/";
-$target_file_pat = $target_dir_pat . basename($_FILES["uplpatimg"]["name"]);
-$imageFileType_pat = strtolower(pathinfo($target_file_pat,PATHINFO_EXTENSION));
-
-//Size Validation(>500 kb denied)
-if ($_FILES["uplpatimg"]["size"] > 500000 || $_FILES["uplpatimg"]["error"] == 1)
-{
-  $txt_err = "Sorry, your image is too large.";
-  echo "<script> $(document).ready(function(){
-    $('#adpatvalsize').modal({show: true});
-      }); </script>";
- $check_num = 1;
-}
-
-elseif($imageFileType_pat != "jpg" && $imageFileType_pat != "png" && $imageFileType_pat != "jpeg")
-{
-  $txt_err = "Sorry, only JPG, JPEG and PNG files are allowed.";
-  echo "<script> $(document).ready(function(){
-    $('#adpatvalsize').modal({show: true});
-      }); </script>";
-
-  $check_num = 1;
-}
-
-if($check_num == 0)
-{
-  move_uploaded_file($_FILES["uplpatimg"]["tmp_name"], $target_file_pat);
-  $addpattern_cc = $_POST['txtapattern'];
-  $addpattern = mysqli_real_escape_string($dbc, $addpattern_cc);
-  require('plugins/image/SimpleImage.php');
-  
-  $img = new claviska\SimpleImage($target_file_pat);
-  
-  try {
-  $img->fromFile($target_file_pat);
-  $pat_path = "../images/tshirt_pattern/".$addpattern.".".$imageFileType_pat;
-  unlink($target_file_pat);
-  $img->resize(100, 100)->toFile($pat_path);
-  
-  } catch(Exception $err) {
-  echo "<script>alert('Error: '" .$e->getMessage()."');</script>";
-  }
-
-  }
-
-  $addpattern_qry = mysqli_query($dbc, "INSERT INTO tbl_pattern(pattern, p_img_path) VALUES('$addpattern', '$pat_path');");
-  if($addpattern_qry)
-  {
-    echo "<meta http-equiv='refresh' content='0'>";
-  }
-
-}
-
-?>
-
-<!-- Add pattern size validation Modal -->
-<div class="modal fade" id="adpatvalsize" role="dialog">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-        <h4 class="text-warning">Error</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span></button>
-        </div>
-        <div class="modal-body">
-          <p><?php echo $txt_err ?></p>
+  <!--================================================================================================================================================= -->
+  <!--add Features Modal Form -->
+    <!--Features Modal Body -->
+      <div class="modal fade" id="featuresmodal" tabindex="-1" role="dialog" aria-labelledby="myfeaturesmodal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Feature</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Feature</span>
+                  </div>
+                  <input type="text" class="form-control" name="txtafeature" id="txtafeature" placeholder="Feature..">
+                  <input type="submit" class="btn btn-primary" name="btnafeature" id="btnafeature" value="Add Feature">
+                </div>
+                <span id="feature_availability"></span>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-</div>
+    <!--/Features Modal Body -->
 
-<!-- image back validation Modal -->
-<div class="modal fade" id="imgbval" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-        <h4 class="text-warning">Image Back Error</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span></button>
-        </div>
-        <div class="modal-body">
-          <p><?php echo $img_b_err ?></p>
+    <!--Feature AJAX Validation (Uniqueness)-->
+      <script>
+        $(document).ready(function(){
+          document.getElementById("btnafeature").disabled = true;
+          $('#txtafeature').blur(function(){
+            var afeature = $(this).val();
+            $.ajax({
+              url: "plugins/chkfeature.php",
+              method: "POST",
+              data: {add_feature:afeature},
+              success:function(html)
+              {
+                if(html == "true")
+                {
+                  if(afeature == "")
+                  {
+                    $('#feature_availability').html('<span class="text-danger">Enter a Feature!</span>');
+                    document.getElementById("btnafeature").disabled = true;
+                  }
+                  else
+                  {
+                    $('#feature_availability').html('<span class="text-danger">Feature already existed!</span>');
+                    document.getElementById("btnafeature").disabled = true;
+                  }
+                }
+
+                if(html == "false")
+                {
+                  if(afeature == "")
+                  {
+                    $('#feature_availability').html('<span class="text-danger">Enter a Feature!</span>');
+                    document.getElementById("btnafeature").disabled = true;
+                  }
+                  else
+                  {
+                    $('#feature_availability').html('<span></span>');
+                    document.getElementById("btnafeature").disabled = false;
+                  }
+                }
+              }
+            })
+          })
+        });
+      </script>
+    <!--/Feature AJAX Validation (Uniqueness)-->
+
+    <!--Insert Feature into DB-->
+      <?php
+      if(isset($_POST['btnafeature']))
+      {
+        $addfeature_cc = $_POST['txtafeature'];
+        $addfeature = mysqli_real_escape_string($dbc, $addfeature_cc);
+        $addfeature_qry = mysqli_query($dbc, "INSERT INTO tbl_feature(feature) VALUES('$addfeature');");
+        if($addfeature_qry)
+        {
+          echo "<meta http-equiv='refresh' content='0'>";
+        }
+      }
+      ?>
+    <!--/Insert Feature into DB-->
+  <!--/add Features Modal Form -->
+
+  <!--================================================================================================================================================= -->
+  <!--add fabric Modal form -->
+    <!--fabric Modal Body -->
+      <div class="modal fade" id="fabricmodal" tabindex="-1" role="dialog" aria-labelledby="myfabricmodal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Fabric</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Fabric</span>
+                  </div>
+                  <input type="text" class="form-control" name="txtafabric" id="txtafabric" placeholder="Fabric..">
+                  <input type="submit" class="btn btn-primary" name="btnafabric" id="btnafabric" value="Add Fabric">
+                </div>
+                <span id="fabric_availability"></span>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-</div>
+    <!--/fabric Modal Body -->
 
-<!-- image front validation Modal -->
-<div class="modal fade" id="imgfval" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-        <h4 class="text-warning">Image Front Error</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span></button>
-        </div>
-        <div class="modal-body">
-          <p><?php echo $img_f_err ?></p>
+    <!--Fabric AJAX Validation (Uniqueness)-->
+      <script>
+        $(document).ready(function(){
+          document.getElementById("btnafabric").disabled = true;
+          $('#txtafabric').blur(function(){
+            var afabric = $(this).val();
+            $.ajax({
+              url: "plugins/chkfabric.php",
+              method: "POST",
+              data: {add_fabric:afabric},
+              success:function(html)
+              {
+                if(html == "true")
+                {
+                  if(afabric == "")
+                  {
+                    $('#fabric_availability').html('<span class="text-danger">Enter a Fabric!</span>');
+                    document.getElementById("btnafabric").disabled = true;
+                  }
+                  else
+                  {
+                    $('#fabric_availability').html('<span class="text-danger">Fabric already existed!</span>');
+                    document.getElementById("btnafabric").disabled = true;
+                  }
+                }
+
+                if(html == "false")
+                {
+                  if(afabric == "")
+                  {
+                    $('#fabric_availability').html('<span class="text-danger">Enter a Fabric!</span>');
+                    document.getElementById("btnafabric").disabled = true;
+                  }
+                  else
+                  {
+                    $('#fabric_availability').html('<span></span>');
+                    document.getElementById("btnafabric").disabled = false;
+                  }
+                }
+              }
+            })
+          })
+        });
+      </script>
+    <!--/Fabric AJAX Validation (Uniqueness)-->
+
+    <!--Insert Fabric into DB-->
+      <?php
+      if(isset($_POST['btnafabric']))
+      {
+        $addfabric_cc = $_POST['txtafabric'];
+        $addfabric = mysqli_real_escape_string($dbc, $addfabric_cc);
+        $addfabric_qry = mysqli_query($dbc, "INSERT INTO tbl_fabric(fabric) VALUES('$addfabric');");
+        if($addfabric_qry)
+        {
+          echo "<meta http-equiv='refresh' content='0'>";
+        }
+      }
+      ?>
+    <!--/Insert Fabric into DB-->
+  <!--add fabric Modal form -->
+
+  <!--================================================================================================================================================= -->
+  <!--add Pattern Modal form -->
+    <!--Pattern Modal Body -->
+      <div class="modal fade" id="patternmodal" tabindex="-1" role="dialog" aria-labelledby="mypatternmodal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Pattern</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Pattern</span>
+                  </div>
+                  <input type="text" class="form-control" name="txtapattern" id="txtapattern" placeholder="Pattern..">
+                  <input type="file" id="uplpatimg" name="uplpatimg">
+                </div>
+                <span id="pattern_availability"></span>
+                <input type="submit" class="btn btn-primary" name="btnapattern" id="btnapattern" value="Add Pattern">
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-</div>
+    <!--/Pattern Modal Body -->
 
-<!-- New T-Shirt added Modal -->
-<div class="modal fade" id="addshirtsuc" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-        <h4 class="text-success">Success!</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span></button>
-        </div>
-        <div class="modal-body">
-          <p>New T-Shirt Added!</p>
-        </div>
-      </div>
-    </div>
-</div>
+    <!--Pattern AJAX Validation (Uniqueness)-->
+      <script>
+        $(document).ready(function(){
+          document.getElementById("btnapattern").disabled = true;
+          $('#txtapattern').blur(function(){
+            var apattern = $(this).val();
+            $.ajax({
+              url: "plugins/chkpattern.php",
+              method: "POST",
+              data: {add_pattern:apattern},
+              success:function(html)
+              {
+                if(html == "true")
+                {
+                  if(apattern == "")
+                  {
+                    $('#pattern_availability').html('<span class="text-danger">Enter a Pattern!</span>');
+                    document.getElementById("btnapattern").disabled = true;
+                  }
+                  else
+                  {
+                    $('#pattern_availability').html('<span class="text-danger">Pattern already existed!</span>');
+                    document.getElementById("btnapattern").disabled = true;
+                  }
+                }
 
-    
+                if(html == "false")
+                {
+                  if(apattern == "")
+                  {
+                    $('#pattern_availability').html('<span class="text-danger">Enter a Pattern!</span>');
+                    document.getElementById("btnapattern").disabled = true;
+                  }
+                  else
+                  {
+                    $('#pattern_availability').html('<span></span>');
+                    document.getElementById("btnapattern").disabled = false;
+                  }
+                }
+              }
+            })
+          })
+        });
+      </script>
+    <!--/Pattern AJAX Validation (Uniqueness)-->
+
+    <!--Insert Pattern into DB-->
+      <?php
+      if(isset($_POST['btnapattern']))
+      {
+        //Pattern Add image Validation
+      $check_num = 0;
+      $target_dir_pat = "../images/tshirt_pattern/";
+      $target_file_pat = $target_dir_pat . basename($_FILES["uplpatimg"]["name"]);
+      $imageFileType_pat = strtolower(pathinfo($target_file_pat,PATHINFO_EXTENSION));
+
+      //Size Validation(>500 kb denied)
+      if ($_FILES["uplpatimg"]["size"] > 500000 || $_FILES["uplpatimg"]["error"] == 1)
+      {
+        $txt_err = "Sorry, your image is too large.";
+        echo "<script> $(document).ready(function(){
+          $('#adpatvalsize').modal({show: true});
+            }); </script>";
+      $check_num = 1;
+      }
+
+      elseif($imageFileType_pat != "jpg" && $imageFileType_pat != "png" && $imageFileType_pat != "jpeg")
+      {
+        $txt_err = "Sorry, only JPG, JPEG and PNG files are allowed.";
+        echo "<script> $(document).ready(function(){
+          $('#adpatvalsize').modal({show: true});
+            }); </script>";
+
+        $check_num = 1;
+      }
+
+      if($check_num == 0)
+      {
+        move_uploaded_file($_FILES["uplpatimg"]["tmp_name"], $target_file_pat);
+        $addpattern_cc = $_POST['txtapattern'];
+        $addpattern = mysqli_real_escape_string($dbc, $addpattern_cc);
+        require('plugins/image/SimpleImage.php');
+        
+        $img = new claviska\SimpleImage($target_file_pat);
+        
+        try {
+        $img->fromFile($target_file_pat);
+        $pat_path = "../images/tshirt_pattern/".$addpattern.".".$imageFileType_pat;
+        unlink($target_file_pat);
+        $img->resize(100, 100)->toFile($pat_path);
+        
+        } catch(Exception $err) {
+        echo "<script>alert('Error: '" .$e->getMessage()."');</script>";
+        }
+
+        }
+
+        $addpattern_qry = mysqli_query($dbc, "INSERT INTO tbl_pattern(pattern, p_img_path) VALUES('$addpattern', '$pat_path');");
+        if($addpattern_qry)
+        {
+          echo "<meta http-equiv='refresh' content='0'>";
+        }
+
+      }
+      ?>
+    <!--/Insert Pattern into DB-->
+  <!--/add Pattern Modal form -->
+
+  <!--================================================================================================================================================= -->
+  <!--add Size Modal form -->
+    <!--Size Modal Body -->
+      <div class="modal fade" id="sizemodal" tabindex="-1" role="dialog" aria-labelledby="mysizemodal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Add Size</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Size</span>
+                      </div>
+                      <input type="text" class="form-control" placeholder="Size.." aria-label="brand" name="txtasize" id="txtasize">
+                      <input type="text" class="form-control" placeholder="Size Desc.." aria-label="brand" name="txtasizedes" id="txtasizedes">
+                      <input type="submit" class="btn btn-primary" id="btnasize" name="btnasize" Value="Add Size">
+                    </div>
+                    <span id="size_availability"></span>
+                  </form>
+                </div>
+              </div>
+            </div>
+        </div>
+    <!--/Size Modal Body -->
+        
+    <!--Size AJAX Validation (Uniqueness)-->
+      <script>
+        $(document).ready(function(){
+          document.getElementById("btnasize").disabled = true;
+          $('#txtasize').blur(function(){
+            var asize = $(this).val();
+            $.ajax({
+              url: "plugins/chksize.php",
+              method: "POST",
+              data: {add_size:asize},
+              success:function(html)
+              {
+                if(html == "true")
+                {
+                  $('#size_availability').html('<span class="text-danger">Size already existed!</span>');
+                  document.getElementById("btnasize").disabled = true;
+                }
+
+                if(html == "false")
+                {
+                  if(asize == "")
+                  {
+                    $('#size_availability').html('<span class="text-danger">Enter a Size!</span>');
+                    document.getElementById("btnasize").disabled = true;
+                  }
+                  else
+                  {
+                    $('#size_availability').html('<span></span>');
+                    document.getElementById("btnasize").disabled = false;
+                  }
+
+                }
+              }
+            })
+          })
+        });
+      </script>
+    <!--/Size AJAX Validation (Uniqueness)-->
+
+    <!--Insert Size into DB-->
+      <?php
+      if(isset($_POST['btnasize']))
+      {
+        $addsize_cc = trim($_POST['txtasize']);
+        $addsizedes_cc = trim($_POST['txtasizedes']);
+        $addsize = mysqli_real_escape_string($dbc, $addsize_cc);
+        $addsizedes = mysqli_real_escape_string($dbc, $addsizedes_cc);
+        $addsize_qry = mysqli_query($dbc, "INSERT INTO tbl_size(size, size_desc) VALUES('$addsize', '$addsizedes');");
+        if($addsize_qry)
+        {
+          echo "<meta http-equiv='refresh' content='0'>";
+        }
+      }
+      ?>
+    <!--/Insert Size into DB-->
+  <!--add Size Modal form -->
+
+  <!--================================================================================================================================================= -->
+
+  <!-- Add pattern image size validation Modal -->
+    <div class="modal fade" id="adpatvalsize" role="dialog">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="text-warning">Error</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+              <p><?php echo $txt_err ?></p>
+            </div>
+          </div>
+        </div>
+    </div>
+  <!-- /Add pattern image size validation Modal -->
+
+  <!-- image back validation Modal -->
+    <div class="modal fade" id="imgbval" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="text-warning">Image Back Error</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+              <p><?php echo $img_b_err ?></p>
+            </div>
+          </div>
+        </div>
+    </div>
+  <!-- /image back validation Modal -->
+
+  <!-- image front validation Modal -->
+    <div class="modal fade" id="imgfval" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="text-warning">Image Front Error</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+              <p><?php echo $img_f_err ?></p>
+            </div>
+          </div>
+        </div>
+    </div>
+  <!-- /image front validation Modal -->
+
+  <!-- New T-Shirt added Modal -->
+    <div class="modal fade" id="addshirtsuc" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="text-success">Success!</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+              <p>New T-Shirt Added!</p>
+            </div>
+          </div>
+        </div>
+    </div>
+  <!-- /New T-Shirt added Modal -->
+<!-- /Modals-->
+
+<!-- Image Preview Script-->
     <script src="../js/file-upload-with-preview.js"></script>
     <script>
       var upload1 = new FileUploadWithPreview('imgf');
       var upload2 = new FileUploadWithPreview('imgb');
     </script>
+<!-- /Image Preview Script-->
     <?php require('../includes/admin_footer.php'); ?>
   </body>
 </html>
