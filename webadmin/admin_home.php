@@ -1,4 +1,6 @@
-<?php require("no_redirect.php");
+<?php 
+require("no_redirect.php");
+require('plugins/image/SimpleImage.php');
 error_reporting(E_ALL & ~E_WARNING);
 ?>
 <!DOCTYPE html>
@@ -26,6 +28,138 @@ error_reporting(E_ALL & ~E_WARNING);
   </head>
   <body>
     <?php require('../includes/admin_navbar.php'); ?>
+
+<!--functions-->
+  <?php
+  function savStatetxt($txtname, $upid, $upval)
+  {
+    if(isset($txtname))
+    {
+      echo $txtname;
+    }
+    elseif(isset($upid))
+    {
+      echo $upval;
+    }
+  }
+
+  function savStatemul($postmul, $dbval, $upid, $sqlarr)
+  {
+    if(isset($postmul))
+    {
+      foreach(@$postmul as $col)
+      {
+        if($col==$dbval)
+        {
+          echo "selected";
+        }
+      }
+    } 
+    if(isset($upid))
+    {
+      foreach ($sqlarr as $col_key => $col_av)
+      {
+        if($col_av==$dbval)
+        {
+          echo "selected";
+        }
+      }
+    }
+  }
+
+  function savStatesin($slt, $sqlid, $upid, $acid)
+  {
+    if(@$slt==$sqlid)
+    {
+      echo 'selected';
+    } 
+    elseif(isset($upid))
+    {
+      if($sqlid == $acid)
+      {
+        echo 'selected';
+      }
+    }
+  }
+  ?>
+<!--/functions-->
+
+<!--Update T-Shirt function-->
+  <?php
+    if(isset($_GET['uptshirt']))
+    {
+    //Retrieve T-Shirt id,brand,category,design,type,size
+      $shirt_id_up = $_GET['uptshirt'];
+      $tshirt_sel_sql = "SELECT * FROM tbl_tshirt WHERE tshirt_id =".$shirt_id_up;
+      $tshirt_sel_qry = mysqli_query($dbc, $tshirt_sel_sql);
+      $res_sel = mysqli_fetch_assoc($tshirt_sel_qry);
+      if(tshirt_sel_qry)
+      {
+        $shirtid_av = $res_sel['tshirt_id'];
+        $shirtprice_av = $res_sel['price'];
+        $shirtqty_av = $res_sel['quantity'];
+        $shirtbrand_av = $res_sel['brand_id'];
+        $shirtcat_av = $res_sel['category_id'];
+        $shirtdesign_av = $res_sel['design_id'];
+        $shirttype_av = $res_sel['type_id'];
+        $shirtsize_av = $res_sel['size_id'];
+      }
+    //Retrieve T-Shirt id,brand,category,design,type,size//
+
+    //Retrieve T-Shirt Color
+      $tshirt_color_sql = "SELECT * FROM tbl_tshirt_color WHERE tshirt_id =".$shirt_id_up;  
+      $tshirt_color_qry = mysqli_query($dbc, $tshirt_color_sql);
+      if(tshirt_color_qry)
+      {
+        $col_arry = array();
+        while($row_col = mysqli_fetch_array($tshirt_color_qry))
+        {
+          $col_arry[] = $row_col['color_id'];
+        }
+      }
+    //Retrieve T-Shirt Color//
+
+    //Retrieve T-Shirt Features
+      $tshirt_features_sql = "SELECT * FROM tbl_tshirt_features WHERE tshirt_id =".$shirt_id_up;  
+      $tshirt_features_qry = mysqli_query($dbc, $tshirt_features_sql);
+      if(tshirt_features_qry)
+      {
+        $features_arry = array();
+        while($row_feat = mysqli_fetch_array($tshirt_features_qry))
+        {
+          $feat_arry[] = $row_feat['feature_id'];
+        }
+      }
+    //Retrieve T-Shirt Features//
+    
+    //Retrieve T-Shirt Fabric
+      $tshirt_fabric_sql = "SELECT * FROM tbl_tshirt_fabric WHERE tshirt_id =".$shirt_id_up;  
+      $tshirt_fabric_qry = mysqli_query($dbc, $tshirt_fabric_sql);
+      if(tshirt_fabric_qry)
+      {
+        $fabric_arry = array();
+        while($row_fab = mysqli_fetch_array($tshirt_fabric_qry))
+        {
+          $fabric_arry[] = $row_fab['fabric_id'];
+        }
+      }
+    //Retrieve T-Shirt Fabric//
+    
+    //Retrieve T-Shirt Pattern
+      $tshirt_pattern_sql = "SELECT * FROM tbl_tshirt_pattern WHERE tshirt_id =".$shirt_id_up;  
+      $tshirt_pattern_qry = mysqli_query($dbc, $tshirt_pattern_sql);
+      if(tshirt_pattern_qry)
+      {
+        $patter_arry = array();
+        while($row_pat = mysqli_fetch_array($tshirt_pattern_qry))
+        {
+          $patter_arry[] = $row_pat['pattern_id'];
+        }
+      }
+    //Retrieve T-Shirt Pattern//
+    }
+  ?>
+<!--/Update T-Shirt function-->
       
 <!-- Form Validation PHP-->
       <?php
@@ -247,9 +381,6 @@ error_reporting(E_ALL & ~E_WARNING);
             {
               //take the last t-shirt generated id
               $shirt_id = mysqli_insert_id($dbc);
-              //echo $shirt_id."<br>";
-
-              //Color dropdown validation + insert to color associative
              
               if(isset($color_cc))
               {
@@ -260,15 +391,8 @@ error_reporting(E_ALL & ~E_WARNING);
               }
               else
               {
-                //$color_err = "<br>Please select a color";
                 mysqli_rollback($dbc);
               }
-
-              //Color associative insert check
-              // if($res_color)
-              // {
-              //   mysqli_commit($dbc);
-              // }
 
               //Features Validation + insert to features associative
               if(isset($features_cc))
@@ -280,15 +404,8 @@ error_reporting(E_ALL & ~E_WARNING);
               }
               else
               {
-                //$features_err = "<br>Please select a feature";
                 mysqli_rollback($dbc);
               }
-
-              //features associative insert check
-              // if($res_feature)
-              // {
-              //   mysqli_commit($dbc);
-              // }
 
               // Fabric Validation + insert to fabric associative
               if(isset($fabric_cc))
@@ -300,15 +417,8 @@ error_reporting(E_ALL & ~E_WARNING);
               }
               else
               {
-                //$fabric_err = "<br>Please select a fabric";
                 mysqli_rollback($dbc);
               }
-
-              //fabric associative insert check
-              // if($res_fabric)
-              // {
-              //   mysqli_commit($dbc);
-              // }
 
             // Pattern Validation + insert to features associative
              if(isset($pattern_cc))
@@ -326,19 +436,48 @@ error_reporting(E_ALL & ~E_WARNING);
              }           
 
              //pattern associative insert check
-              // if($res_pattern)
-              // {
-              //   mysqli_commit($dbc);
-              // }
-
               if($res_color && $res_feature && $res_fabric && $res_pattern)
               {
                 move_uploaded_file($_FILES["uplfimg"]["tmp_name"], $target_file_imgf);
                 move_uploaded_file($_FILES["uplbimg"]["tmp_name"], $target_file_imgb);
-                echo "<script> $(document).ready(function(){
-                  $('#addshirtsuc').modal({show: true});
-                    }); </script>";
-                mysqli_commit($dbc);
+
+                $imgf = new claviska\SimpleImage($target_file_imgf);
+                try {
+                  $imgf->fromFile($target_file_imgf);
+                  $imgf_path = "../images/tshirt/tshirtimgf".date("Y.m.d").".".$imageFileType_imgf;
+                  unlink($target_file_imgf);
+                  $imgf->resize(680, 680)->toFile($imgf_path);
+                  
+                  } catch(Exception $err) {
+                  echo "<script>alert('Error: '" .$e->getMessage()."');</script>";
+                  }
+                
+                  $imgb = new claviska\SimpleImage($target_file_imgb);
+                  try {
+                    $imgb->fromFile($target_file_imgb);
+                    $imgb_path = "../images/tshirt/tshirtimgb".date("Y.m.d").".".$imageFileType_imgb;
+                    unlink($target_file_imgb);
+                    $imgb->resize(680, 680)->toFile($imgb_path);
+                    
+                    } catch(Exception $err) {
+                    echo "<script>alert('Error: '" .$e->getMessage()."');</script>";
+                    }
+                
+                  $img_update_sql = "UPDATE tbl_tshirt SET img_front='$imgf_path', img_back='$imgb_path' WHERE tshirt_id = '$shirt_id'";
+                  $img_update_qry = mysqli_query($dbc, $img_update_sql);
+                  
+                    if(img_update_qry)
+                    {
+                      echo "<script> $(document).ready(function(){
+                        $('#addshirtsuc').modal({show: true});
+                          }); </script>";
+                      mysqli_commit($dbc);
+                    }
+                    else
+                    {
+                      mysqli_rollback($dbc);
+                      echo "<script>alert('fail');</script>";
+                    }
               }
 
             }
@@ -348,354 +487,354 @@ error_reporting(E_ALL & ~E_WARNING);
 <!--/Form Validation PHP-->
 
 <!--Form Frontend-->
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data" >
-          <div class="container-fluid">
-            <!-- <div class="row"> -->
-              <!-- <div class="col-sm"> -->
-  <table id="adshirttbl" class="table-responsive">
-    <tr>
-      <td>
-        <!--Brand Field-->
-          <!--Brands-->
-            <label for="Brands">Brands</label>
-          </td>
-          <td>
-            <select class="selectpicker" id="sltbrand" name="sltbrand" data-width="201px">
-              <option value="0">Choose a brand..</option>
-              <?php
-              $sql ="Select * from tbl_brand";
-              $query = mysqli_query($dbc,$sql);
-              while ($row =mysqli_fetch_array($query)) {
-                $brand_id = $row['brand_id'];
-                $brand = $row['brand'];
-                ?>
-                <option value='<?php echo $brand_id;?>' <?php if(@$_POST['sltbrand']==$brand_id){echo 'selected';} ?>><?php echo $brand;?></option>";
-                <?php
-              }
-              ?>
-            </select>
-            <!-- Brand modal Trigger Button -->
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#brandmodal"><span class="glyphicon">&#x2b;</span></button>
-        <!--/Brand Field-->
-      </td>
-      
-      <td class="tdcoladjust">
-        <!--Fabric Field-->
-          <!--Fabric-->
-          <!-- <div class="col-sm"> -->
-            <label class="mr-sm-2" for="Fabrics">Fabrics</label>
-          </td>
-          <td>
-            <select class="selectpicker" id="sltfabric" name="sltfabric[]" data-live-search="true" data-size="5" title="Choose fabric/s" data-width="201px"  multiple>
-            <?php
-            $sql_fabric ="Select * from tbl_fabric";
-            $sql_fabric_exe = mysqli_query($dbc,$sql_fabric);
-            while ($fabricrow =mysqli_fetch_array($sql_fabric_exe, MYSQLI_ASSOC))
-            {
-              ?>
-              <option value="<?php echo $fabricrow['fabric_id'];?>" data-tokens="<?php echo $fabricrow['fabric'];?>" <?php foreach(@$_POST['sltfabric'] as $col){if($col==$fabricrow['fabric_id']){echo "selected";}} ?>><?php echo $fabricrow['fabric'];?></option>
-              <?php
-            }
-            ?>
-            </select>
-            <!-- Fabric modal Trigger Button -->
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#fabricmodal"><span class="glyphicon">&#x2b;</span></button>
-        <!--Fabric Field-->
-      </td>
-      
-      <td>
-        <!--Pattern Field-->
-            <!-- <div class="col-sm"> -->
-            <!--Pattern-->
-              <label for="Pattern">Pattern</label>
-              </td>
-              <td>
-              <select class="selectpicker icon-menus" title="Select a pattern" id="sltpat" name="sltpat[]" data-live-search="true" data-size="5" data-width="201px" multiple>
-              <?php
-              $sql_pattern ="Select * from tbl_pattern;";
-              $sql_pattern_exe = mysqli_query($dbc,$sql_pattern);
-              while ($patternrow =mysqli_fetch_array($sql_pattern_exe, MYSQLI_ASSOC))
-              {
-                ?>
-                <option data-content="<img src='<?php echo $patternrow['p_img_path']; ?>' width='15px' height='15px'> <?php echo $patternrow['pattern']; ?>" value="<?php echo $patternrow['pattern_id']; ?>" data-tokens="<?php echo $patternrow['pattern'] ?>" <?php foreach(@$_POST['sltpat'] as $col){if($col==$patternrow['pattern_id']){echo "selected";}} ?>></option>;
-                <?php
-              }
-              ?>
-              </select>
-              <!-- Pattern modal Trigger Button -->
-              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#patternmodal"><span class="glyphicon">&#x2b;</span></button>
-        <!--/Pattern Field-->
-      </td>
-    </tr>
-
-    <tr>
-    <!--Error Msgs-->
-      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$brand_err; ?></span></td>
-      <td colspan="2" class="tdadjust tdcoladjust"><span class="errfrm"><?php echo @$fabric_err; ?></span></td>
-      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$pattern_err; ?> </span></td>
-    <!--/Error Msgs-->
-    </tr>
-    
-    <tr>
-      <td>
-        <!--Category Field-->
-            <!--Category-->
-              <label for="Category">Category</label>
-              </td>
-              <td>
-              <select class="selectpicker" id="sltcat" name="sltcat" data-width="201px">
-                <option value="0">Choose a category..</option>
-                <?php
-                $sql ="Select * from tbl_category";
-                $query = mysqli_query($dbc,$sql);
-                while ($row =mysqli_fetch_array($query)) {
-                  $cat_id = $row['cat_id'];
-                  $category = $row['cat_name'];
-                  ?>
-                  <option value='<?php echo $cat_id; ?>' <?php if(@$_POST['sltcat']==$cat_id){echo 'selected';} ?>><?php echo $category; ?></option>";
-                  <?php
-                }
-                ?>
-              </select>
-              <!-- Category modal Trigger Button -->
-              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#catmodal"><span class="glyphicon">&#x2b;</span></button>
-        <!--/Category Field-->
-      </td>
-      
-      <td class="tdcoladjust">
-        <!--Type Field-->
-            <!--Type-->
-            <label for="Type">Type</label>
+          <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data" >
+            <div class="container-fluid">
+              <!-- <div class="row"> -->
+                <!-- <div class="col-sm"> -->
+    <table id="adshirttbl" class="table-responsive">
+      <tr>
+        <td>
+          <!--Brand Field-->
+            <!--Brands-->
+              <label for="Brands">Brands</label>
             </td>
             <td>
-            <select class="selectpicker" id="slttype" name="slttype" data-width="201px">
-              <option value="0">Choose a type..</option>
+              <select class="selectpicker" id="sltbrand" name="sltbrand" data-width="201px">
+                <option value="0">Choose a brand..</option>
                 <?php
-                $sql ="Select * from tbl_type";
+                $sql ="Select * from tbl_brand";
                 $query = mysqli_query($dbc,$sql);
                 while ($row =mysqli_fetch_array($query)) {
-                $id = $row['type_id'];
-                $title = $row['type'];
-                ?>
-                <option value='<?php echo $id;?>' <?php if(@$_POST['slttype']==$id){echo "selected";} ?>><?php echo $title;?></option>";
-                <?php
-                }
-                ?>
-            </select>
-        <!--/Type Field-->
-      </td>
-
-      <td>
-        <!--Size Field-->
-          <!--Size-->
-          <label for="size">Size</label>
-          </td>
-          <td>
-          <select class="selectpicker" id="sltsize" name="sltsize" data-width="201px">
-            <option value="0">Choose a Size...</option>
-            <?php
-            $sql ="Select * from tbl_size";
-            $query = mysqli_query($dbc,$sql);
-            while ($row =mysqli_fetch_array($query)) {
-              $id = $row['size_id'];
-              $title = $row['size'];
-              ?>
-              <option value='<?php echo $id; ?>' <?php if(@$_POST['sltsize'] == $id){echo 'selected';} ?>><?php echo $title; ?></option>";
-              <?php
-            }
-            ?>
-          </select>
-          <!-- Size modal Trigger Button -->
-          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#sizemodal"><span class="glyphicon">&#x2b;</span></button>
-        <!--/size Field-->
-      </td>
-
-    </tr>
-
-    <tr>
-    <!--Error Msgs-->
-      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$cat_err; ?></span></td>
-      <td colspan="2" class="tdadjust tdcoladjust"><span class="errfrm"><?php echo @$type_err; ?></span></td>
-      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$size_err; ?></span></td>
-    <!--/Error Msgs-->
-    </tr>
-
-    <tr>
-      <td>
-        <!--Color Field-->
-          <!--Colour-->
-            <label class="mr-sm-2" for="Color">Color</label>
-          </td>
-          <td>
-            <select id="ddcolor" name="ddcolor[]" class="selectpicker" data-live-search="true" data-size="5" title="Choose a Color/s" data-width="201px"  multiple>
-              <?php
-                $sql_color = "SELECT * FROM tbl_color;";
-                $sql_color_exe = mysqli_query($dbc, $sql_color);
-
-                while($colrow = mysqli_fetch_array($sql_color_exe, MYSQLI_ASSOC))
-                {?>
-                    <option value="<?php echo $colrow['color_id']?>" data-tokens="<?php echo $colrow['color'];?>" data-subtext="<?php echo $colrow['color_code'];?>" style='background:<?php echo $colrow['color_code'];?>; color: black;' <?php foreach(@$_POST['ddcolor'] as $col){if($col==$colrow['color_id']){echo "selected";}} ?>><?php echo $colrow['color'];?></option>;
+                  $brand_id = $row['brand_id'];
+                  $brand = $row['brand'];
+                  ?>
+                  <option value='<?php echo $brand_id;?>' <?php @savStatesin($_POST['sltbrand'], $brand_id, $shirt_id_up, $shirtbrand_av); ?>><?php echo $brand;?></option>";
                   <?php
                 }
+                ?>
+              </select>
+              <!-- Brand modal Trigger Button -->
+              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#brandmodal"><span class="glyphicon">&#x2b;</span></button>
+          <!--/Brand Field-->
+        </td>
+        
+        <td class="tdcoladjust">
+          <!--Fabric Field-->
+            <!--Fabric-->
+            <!-- <div class="col-sm"> -->
+              <label class="mr-sm-2" for="Fabrics">Fabrics</label>
+            </td>
+            <td>
+              <select class="selectpicker" id="sltfabric" name="sltfabric[]" data-live-search="true" data-size="5" title="Choose fabric/s" data-width="201px"  multiple>
+              <?php
+              $sql_fabric ="Select * from tbl_fabric";
+              $sql_fabric_exe = mysqli_query($dbc,$sql_fabric);
+              while ($fabricrow =mysqli_fetch_array($sql_fabric_exe, MYSQLI_ASSOC))
+              {
+                ?>
+                <option value="<?php echo $fabricrow['fabric_id'];?>" data-tokens="<?php echo $fabricrow['fabric'];?>" <?php @savStatemul(@$_POST['sltfabric'], @$fabricrow['fabric_id'], @$shirt_id_up, @$fabric_arry); ?>><?php echo $fabricrow['fabric'];?></option>
+                <?php
+              }
+              ?>
+              </select>
+              <!-- Fabric modal Trigger Button -->
+              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#fabricmodal"><span class="glyphicon">&#x2b;</span></button>
+          <!--Fabric Field-->
+        </td>
+        
+        <td>
+          <!--Pattern Field-->
+              <!-- <div class="col-sm"> -->
+              <!--Pattern-->
+                <label for="Pattern">Pattern</label>
+                </td>
+                <td>
+                <select class="selectpicker icon-menus" title="Select a pattern" id="sltpat" name="sltpat[]" data-live-search="true" data-size="5" data-width="201px" multiple>
+                <?php
+                $sql_pattern ="Select * from tbl_pattern;";
+                $sql_pattern_exe = mysqli_query($dbc,$sql_pattern);
+                while ($patternrow =mysqli_fetch_array($sql_pattern_exe, MYSQLI_ASSOC))
+                {
+                  ?>
+                  <option data-content="<img src='<?php echo $patternrow['p_img_path']; ?>' width='15px' height='15px'> <?php echo $patternrow['pattern']; ?>" value="<?php echo $patternrow['pattern_id']; ?>" data-tokens="<?php echo $patternrow['pattern'] ?>" <?php @savStatemul(@$_POST['sltpat'], @$patternrow['pattern_id'], @$shirt_id_up, @$patter_arry); ?>></option>;
+                  <?php
+                }
+                ?>
+                </select>
+                <!-- Pattern modal Trigger Button -->
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#patternmodal"><span class="glyphicon">&#x2b;</span></button>
+          <!--/Pattern Field-->
+        </td>
+      </tr>
+
+      <tr>
+      <!--Error Msgs-->
+        <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$brand_err; ?></span></td>
+        <td colspan="2" class="tdadjust tdcoladjust"><span class="errfrm"><?php echo @$fabric_err; ?></span></td>
+        <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$pattern_err; ?> </span></td>
+      <!--/Error Msgs-->
+      </tr>
+      
+      <tr>
+        <td>
+          <!--Category Field-->
+              <!--Category-->
+                <label for="Category">Category</label>
+                </td>
+                <td>
+                <select class="selectpicker" id="sltcat" name="sltcat" data-width="201px">
+                  <option value="0">Choose a category..</option>
+                  <?php
+                  $sql ="Select * from tbl_category";
+                  $query = mysqli_query($dbc,$sql);
+                  while ($row =mysqli_fetch_array($query)) {
+                    $cat_id = $row['cat_id'];
+                    $category = $row['cat_name'];
+                    ?>
+                    <option value='<?php echo $cat_id; ?>' <?php @savStatesin($_POST['sltcat'], $cat_id, $shirt_id_up, $shirtcat_av); ?>><?php echo $category; ?></option>";
+                    <?php
+                  }
+                  ?>
+                </select>
+                <!-- Category modal Trigger Button -->
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#catmodal"><span class="glyphicon">&#x2b;</span></button>
+          <!--/Category Field-->
+        </td>
+        
+        <td class="tdcoladjust">
+          <!--Type Field-->
+              <!--Type-->
+              <label for="Type">Type</label>
+              </td>
+              <td>
+              <select class="selectpicker" id="slttype" name="slttype" data-width="201px">
+                <option value="0">Choose a type..</option>
+                  <?php
+                  $sql ="Select * from tbl_type";
+                  $query = mysqli_query($dbc,$sql);
+                  while ($row =mysqli_fetch_array($query)) {
+                  $type_id = $row['type_id'];
+                  $type = $row['type'];
+                  ?>
+                  <option value='<?php echo $type_id;?>' <?php @savStatesin($_POST['slttype'], $type_id, $shirt_id_up, $shirttype_av); ?>><?php echo $type;?></option>";
+                  <?php
+                  }
+                  ?>
+              </select>
+          <!--/Type Field-->
+        </td>
+
+        <td>
+          <!--Size Field-->
+            <!--Size-->
+            <label for="size">Size</label>
+            </td>
+            <td>
+            <select class="selectpicker" id="sltsize" name="sltsize" data-width="201px">
+              <option value="0">Choose a Size...</option>
+              <?php
+              $sql ="Select * from tbl_size";
+              $query = mysqli_query($dbc,$sql);
+              while ($row =mysqli_fetch_array($query)) {
+                $size_id = $row['size_id'];
+                $size = $row['size'];
+                ?>
+                <option value='<?php echo $size_id; ?>' <?php @savStatesin($_POST['sltsize'], $size_id, $shirt_id_up, $shirtsize_av); ?>><?php echo $size; ?></option>";
+                <?php
+              }
               ?>
             </select>
-            <!-- Color modal Trigger Button -->
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#colormodal"><span class="glyphicon">&#x2b;</span></button>
-        <!--/Color Field-->
-      </td>
-      
-      <td colspan="2" class="tdcoladjust">
-        <!--Image front Field-->
-          <div id="fade" class="black_overlay"></div>
-            <div class="custom-file-container" data-upload-id="imgf">
-            <label>T-Shirt Front <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
-            
-            <label class="custom-file-container__custom-file" >
-                <input type="file" id="uplfimg[]" name="uplfimg" class="custom-file-container__custom-file__custom-file-input">
-                <span class="custom-file-container__custom-file__custom-file-control"></span>
-            </label>
-            <br>
-            <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">Image Front Preview</a>
-              <div id="light" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">Close</a></div>
-              </div>
-        <!--/Image Front Field-->     
-      </td>
-
-      <td>
-        <!--Price Field-->
-          <!--Price-->
-          <label for="Price">Price</label>
-          </td>
-          <td>
-          <input type="type" name="txtprice" id="txtprice" class="form-control" placeholder="Price" value="<?php if(!empty(@$_POST['txtprice'])){echo @$_POST['txtprice'];} ?>">          
-        <!--/Price Field-->
-      </td>
-    </tr>
-
-    <tr>
-<!--Error Msg -->
-    <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$color_err."<br>"; ?></span></td>
-    <td colspan="2" class="tdadjust">&nbsp;</td>
-    <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$price_err."<br>"; ?> </span></td>
-<!--/Error Msg -->
-    </tr>
-
-    <tr>
-      <td>
-        <!--Design Field-->                 
-          <!--Design-->
-          <label for="Design">Design</label>
-          </td>
-          <td>
-          <select class="selectpicker" id="sltdesign" name="sltdesign" data-live-search="true" data-size="5" data-width="201px">
-            <option value="0" selected>Choose Design..</option>
-            <?php
-            $sql_design ="Select * from tbl_design;";
-            $sql_design_exe = mysqli_query($dbc,$sql_design);
-            while ($designrow =mysqli_fetch_array($sql_design_exe, MYSQLI_ASSOC))
-            {
-              ?>
-              <option value='<?php echo $designrow['design_id'];?>' data-tokens='<?php echo $designrow['design'];?>' <?php if(@$_POST['sltdesign'] == $designrow['design_id']){echo "selected";}?>><?php echo $designrow['design'];?></option>;
-              <?php
-            }
-            ?>
-          </select>
-          <!-- Design modal Trigger Button -->
-          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#designmodal"><span class="glyphicon">&#x2b;</span></button>
-        <!--/Design Field-->
-      </td>
-      
-      <td colspan="2" class="tdcoladjust">
-        <!--Image Back Field-->             
-          <div class="custom-file-container" data-upload-id="imgb">
-                  <label>T-Shirt Back <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
-                  <label class="custom-file-container__custom-file" >
-                      <input type="file" id="uplbimg[]" name="uplbimg" class="custom-file-container__custom-file__custom-file-input">
-                      <span class="custom-file-container__custom-file__custom-file-control"></span>
-                  </label>
-                  <br>
-                    <a href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='block';document.getElementById('fade').style.display='block'">Image Back Preview</a>
-                    <div id="light2" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='none';document.getElementById('fade').style.display='none'">Close</a>
-                    </div>
-                  </div>
-          </div>
-        <!--/Image Back Field-->
-      </td>
-      
-      <td>
-        <!--Quantity Field-->
-          <!--Quantity-->
-          <label for="">Quantity</label>
-          </td>
-          <td>
-          <input type="text" name="txtqty" id="txtqty" class="form-control" placeholder="Quantity" value="<?php if(!empty(@$_POST['txtqty'])){echo @$_POST['txtqty'];} ?>">
-        <!--/Quantity Field-->
-      </td>
-    </tr>
-
-    <tr>
-<!--Error Msgs-->
-      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$design_err; ?></span></td>
-      <td colspan="2" class="tdadjust">&nbsp;</td>
-      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$qty_err; ?> </span></td>
-<!--/Error Msgs-->
-    </tr>
-
-    <tr>
-      <td>
-        <!--Features Field-->
-          <!--features-->
-          <label class="mr-sm-2" for="Features">Features</label>
-          </td>
-          <td>
-          <select class="selectpicker" id="sltfeature" data-width="201px" name="sltfeature[]" data-live-search="true" data-size="5" title="Choose feature/s"  multiple>
-            <?php
-            $sql_feature ="Select * from tbl_feature;";
-            $sql_feature_exe = mysqli_query($dbc,$sql_feature);
-            while ($featurerow =mysqli_fetch_array($sql_feature_exe))
-            {
-              ?>
-              <option value="<?php echo $featurerow['feature_id'];?>" data-tokens="<?php echo $featurerow['feature'];?>" <?php foreach(@$_POST['sltfeature'] as $col){if($col==$featurerow['feature_id']){echo "selected";}} ?>><?php echo $featurerow['feature'];?></option>;
-              <?php
-            }
-            ?>
-          </select>
-          <!-- Features modal Trigger Button -->
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#featuresmodal"><span class="glyphicon">&#x2b;</span></button>
-          <!-- </div> -->
-        <!--/Features Field-->
-      </td>
-    </tr>
-
-    <tr>
-<!--Error Msgs-->
-      <td colspan="2"><span class="errfrm"><?php echo @$features_err; ?> </span></td>
-<!--/Error Msgs-->
-
-      <td class="tdcoladjust">
-<!--Button Field-->
-        <!--Submit Button-->
-        <input type="submit" class="btn btn-primary" name="btnsubas" id="btnsubas">
+            <!-- Size modal Trigger Button -->
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#sizemodal"><span class="glyphicon">&#x2b;</span></button>
+          <!--/size Field-->
         </td>
-        <td class="tdcoladjust">
-        <!--Reset Button-->
-        <input class="btn btn-primary" name="btnreset" id="btnreset" type="button" onclick="clrfrm();" value="Reset">
-<!--/Button Field-->
-      </td>
-    </tr>
-        <!--Clear Script Field-->
-                <script>
-                  function clrfrm()
-                  {
-                    location.reload();
+
+      </tr>
+
+      <tr>
+      <!--Error Msgs-->
+        <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$cat_err; ?></span></td>
+        <td colspan="2" class="tdadjust tdcoladjust"><span class="errfrm"><?php echo @$type_err; ?></span></td>
+        <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$size_err; ?></span></td>
+      <!--/Error Msgs-->
+      </tr>
+
+      <tr>
+        <td>
+          <!--Color Field-->
+            <!--Colour-->
+              <label class="mr-sm-2" for="Color">Color</label>
+            </td>
+            <td>
+              <select id="ddcolor" name="ddcolor[]" class="selectpicker" data-live-search="true" data-size="5" title="Choose a Color/s" data-width="201px"  multiple>
+                <?php
+                  $sql_color = "SELECT * FROM tbl_color;";
+                  $sql_color_exe = mysqli_query($dbc, $sql_color);
+
+                  while($colrow = mysqli_fetch_array($sql_color_exe, MYSQLI_ASSOC))
+                  {?>
+                      <option value="<?php echo $colrow['color_id']?>" data-tokens="<?php echo $colrow['color'];?>" data-subtext="<?php echo $colrow['color_code'];?>" style='background:<?php echo $colrow['color_code'];?>; color: black;' <?php @savStatemul(@$_POST['ddcolor'], @$colrow['color_id'], @$shirt_id_up, @$col_arry); ?>><?php echo $colrow['color'];?></option>;
+                    <?php
                   }
-                </script>
-        <!--/Clear Script Field-->
-  </table>
-      <!-- </div> -->
-      <!-- </div> -->
-    </div>
-    </form>
+                ?>
+              </select>
+              <!-- Color modal Trigger Button -->
+              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#colormodal"><span class="glyphicon">&#x2b;</span></button>
+          <!--/Color Field-->
+        </td>
+        
+        <td colspan="2" class="tdcoladjust">
+          <!--Image front Field-->
+            <div id="fade" class="black_overlay"></div>
+              <div class="custom-file-container" data-upload-id="imgf">
+              <label>T-Shirt Front <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+              
+              <label class="custom-file-container__custom-file" >
+                  <input type="file" id="uplfimg[]" name="uplfimg" class="custom-file-container__custom-file__custom-file-input">
+                  <span class="custom-file-container__custom-file__custom-file-control"></span>
+              </label>
+              <br>
+              <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">Image Front Preview</a>
+                <div id="light" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">Close</a></div>
+                </div>
+          <!--/Image Front Field-->     
+        </td>
+
+        <td>
+          <!--Price Field-->
+            <!--Price-->
+            <label for="Price">Price</label>
+            </td>
+            <td>
+            <input type="type" name="txtprice" id="txtprice" class="form-control" placeholder="Price" value="<?php @savStatetxt(@$_POST['txtprice'], @$shirt_id_up, @$shirtprice_av); ?>">   
+          <!--/Price Field-->
+        </td>
+      </tr>
+
+      <tr>
+  <!--Error Msg -->
+      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$color_err."<br>"; ?></span></td>
+      <td colspan="2" class="tdadjust">&nbsp;</td>
+      <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$price_err."<br>"; ?> </span></td>
+  <!--/Error Msg -->
+      </tr>
+
+      <tr>
+        <td>
+          <!--Design Field-->                 
+            <!--Design-->
+            <label for="Design">Design</label>
+            </td>
+            <td>
+            <select class="selectpicker" id="sltdesign" name="sltdesign" data-live-search="true" data-size="5" data-width="201px">
+              <option value="0" selected>Choose Design..</option>
+              <?php
+              $sql_design ="Select * from tbl_design;";
+              $sql_design_exe = mysqli_query($dbc,$sql_design);
+              while ($designrow =mysqli_fetch_array($sql_design_exe, MYSQLI_ASSOC))
+              {
+                ?>
+                <option value='<?php echo $designrow['design_id'];?>' data-tokens='<?php echo $designrow['design'];?>' <?php @savStatesin($_POST['sltdesign'], $designrow['design_id'], $shirt_id_up, $shirtdesign_av);?>><?php echo $designrow['design'];?></option>;
+                <?php
+              }
+              ?>
+            </select>
+            <!-- Design modal Trigger Button -->
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#designmodal"><span class="glyphicon">&#x2b;</span></button>
+          <!--/Design Field-->
+        </td>
+        
+        <td colspan="2" class="tdcoladjust">
+          <!--Image Back Field-->             
+            <div class="custom-file-container" data-upload-id="imgb">
+                    <label>T-Shirt Back <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Clear Image">x</a></label>
+                    <label class="custom-file-container__custom-file" >
+                        <input type="file" id="uplbimg[]" name="uplbimg" class="custom-file-container__custom-file__custom-file-input">
+                        <span class="custom-file-container__custom-file__custom-file-control"></span>
+                    </label>
+                    <br>
+                      <a href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='block';document.getElementById('fade').style.display='block'">Image Back Preview</a>
+                      <div id="light2" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='none';document.getElementById('fade').style.display='none'">Close</a>
+                      </div>
+                    </div>
+            </div>
+          <!--/Image Back Field-->
+        </td>
+        
+        <td>
+          <!--Quantity Field-->
+            <!--Quantity-->
+            <label for="">Quantity</label>
+            </td>
+            <td>
+            <input type="text" name="txtqty" id="txtqty" class="form-control" placeholder="Quantity" value="<?php @savStatetxt(@$_POST['txtqty'], @$shirt_id_up, @$shirtqty_av); ?>">
+          <!--/Quantity Field-->
+        </td>
+      </tr>
+
+      <tr>
+  <!--Error Msgs-->
+        <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$design_err; ?></span></td>
+        <td colspan="2" class="tdadjust">&nbsp;</td>
+        <td colspan="2" class="tdadjust"><span class="errfrm"><?php echo @$qty_err; ?> </span></td>
+  <!--/Error Msgs-->
+      </tr>
+
+      <tr>
+        <td>
+          <!--Features Field-->
+            <!--features-->
+            <label class="mr-sm-2" for="Features">Features</label>
+            </td>
+            <td>
+            <select class="selectpicker" id="sltfeature" data-width="201px" name="sltfeature[]" data-live-search="true" data-size="5" title="Choose feature/s"  multiple>
+              <?php
+              $sql_feature ="Select * from tbl_feature;";
+              $sql_feature_exe = mysqli_query($dbc,$sql_feature);
+              while ($featurerow =mysqli_fetch_array($sql_feature_exe))
+              {
+                ?>
+                <option value="<?php echo $featurerow['feature_id'];?>" data-tokens="<?php echo $featurerow['feature'];?>" <?php @savStatemul(@$_POST['sltfeature'], @$featurerow['feature_id'], @$shirt_id_up, @$feat_arry); ?>><?php echo $featurerow['feature'];?></option>;
+                <?php
+              }
+              ?>
+            </select>
+            <!-- Features modal Trigger Button -->
+              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#featuresmodal"><span class="glyphicon">&#x2b;</span></button>
+            <!-- </div> -->
+          <!--/Features Field-->
+        </td>
+      </tr>
+
+      <tr>
+  <!--Error Msgs-->
+        <td colspan="2"><span class="errfrm"><?php echo @$features_err; ?> </span></td>
+  <!--/Error Msgs-->
+
+        <td class="tdcoladjust">
+  <!--Button Field-->
+          <!--Submit Button-->
+          <input type="submit" class="btn btn-primary" name="btnsubas" id="btnsubas">
+          </td>
+          <td class="tdcoladjust">
+          <!--Reset Button-->
+          <input class="btn btn-primary" name="btnreset" id="btnreset" type="button" onclick="clrfrm();" value="Reset">
+  <!--/Button Field-->
+        </td>
+      </tr>
+          <!--Clear Script Field-->
+                  <script>
+                    function clrfrm()
+                    {
+                      location.reload();
+                    }
+                  </script>
+          <!--/Clear Script Field-->
+    </table>
+        <!-- </div> -->
+        <!-- </div> -->
+      </div>
+      </form>
 <!--/Form Frontend-->
 
 <!-- Modals-->
@@ -1351,7 +1490,7 @@ error_reporting(E_ALL & ~E_WARNING);
         move_uploaded_file($_FILES["uplpatimg"]["tmp_name"], $target_file_pat);
         $addpattern_cc = $_POST['txtapattern'];
         $addpattern = mysqli_real_escape_string($dbc, $addpattern_cc);
-        require('plugins/image/SimpleImage.php');
+        //require('plugins/image/SimpleImage.php');
         
         $img = new claviska\SimpleImage($target_file_pat);
         

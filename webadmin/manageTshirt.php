@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>ShirtPrints | Manage T-Shirt</title>
     <title>ShirtPrints - Add T-Shirt Form</title>
     <link rel="stylesheet" href="../css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/bootstrap.min.css">
@@ -45,6 +45,7 @@
         <tbody>
         <?php 
             $tshirt_select = "SELECT 
+            ts.tshirt_id AS tshirt_id,
             ts.price AS Price,
             ts.quantity AS Quantity,
             GROUP_CONCAT(DISTINCT tp.pattern) AS Pattern, 
@@ -83,7 +84,7 @@
                 <td><?php echo $row_msa['Size'];?> </td>
                 <td><?php echo $row_msa['Price'];?> </td>
                 <td><?php echo $row_msa['Quantity'];?> </td>
-                <td><a href="#" class="btn btn-info">Modify</a> | <a href="#" class="btn btn-warning">Delete</a></td>
+                <td><a href="admin_home.php?uptshirt='<?php echo $row_msa['tshirt_id'] ?>'" class="btn btn-info">Modify</a> | <a href="#" class="btn btn-warning">Delete</a></td>
                 </tr>
                 <?php
             }
