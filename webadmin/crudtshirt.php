@@ -1,95 +1,115 @@
-<?php 
-require("no_redirect.php");
+<?php require('../includes/dbconnect.php'); 
 require('plugins/image/SimpleImage.php');
 error_reporting(E_ALL & ~E_WARNING);
 ?>
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>ShirtPrints - Add T-Shirt Form</title>
-    <link rel="stylesheet" href="../css/style.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="../css/file-upload-with-preview.css">
-    <script type="text/javascript" src="../js/jquery.min.js"></script>
-    <script type="text/javascript" src="../js/jquery.form.js"></script>
-    <script src="../js/popper-select.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
-    <script src="../js/bootstrap-select.min.js"></script>
-
-    <script>
-    $(document).ready(function()
-    {
-     $('.selectpicker').selectpicker();
-    });
-    </script>
-  
-  </head>
-  <body>
-    <?php require('../includes/admin_navbar.php'); ?>
-
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>ShirtPrints | Manage T-Shirt</title>
+<!--Imports-->
+        <link rel="stylesheet" href="../css/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/bootstrap337.min.css">
+        <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+        <link rel="stylesheet" href="../css/file-upload-with-preview.css">
+        <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css">
+        <script type="text/javascript" src="../js/jquery.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.form.js"></script>
+        <script src="../js/popper-select.js"></script>
+        <script src="../js/bootstrap337.min.js"></script>
+        <script src="../js/bootstrap-select.min.js"></script>
+        <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="../js/main_admin.js"></script>
+<!--/Imports-->
+    </head>
 <!--functions-->
-  <?php
-  function savStatetxt($txtname, $upid, $upval)
-  {
-    if(isset($txtname))
+    <?php
+    //save state + update state render functions
+    function savStatetxt($txtname, $upid, $upval)
     {
-      echo $txtname;
-    }
-    elseif(isset($upid))
-    {
-      echo $upval;
-    }
-  }
-
-  function savStatemul($postmul, $dbval, $upid, $sqlarr)
-  {
-    if(isset($postmul))
-    {
-      foreach(@$postmul as $col)
-      {
-        if($col==$dbval)
+        if(isset($txtname))
         {
-          echo "selected";
+        echo $txtname;
         }
-      }
-    } 
-    if(isset($upid))
-    {
-      foreach ($sqlarr as $col_key => $col_av)
-      {
-        if($col_av==$dbval)
+        elseif(isset($upid))
         {
-          echo "selected";
+        echo $upval;
         }
-      }
     }
-  }
 
-  function savStatesin($slt, $sqlid, $upid, $acid)
-  {
-    if(@$slt==$sqlid)
+    function savStatemul($postmul, $dbval, $upid, $sqlarr)
     {
-      echo 'selected';
-    } 
-    elseif(isset($upid))
+        if(isset($postmul))
+        {
+        foreach(@$postmul as $col)
+        {
+            if($col==$dbval)
+            {
+            echo "selected";
+            }
+        }
+        } 
+        if(isset($upid))
+        {
+        foreach ($sqlarr as $col_key => $col_av)
+        {
+            if($col_av==$dbval)
+            {
+            echo "selected";
+            }
+        }
+        }
+    }
+
+    function savStatesin($slt, $sqlid, $upid, $acid)
     {
-      if($sqlid == $acid)
-      {
+        if(@$slt==$sqlid)
+        {
         echo 'selected';
-      }
+        } 
+        elseif(isset($upid))
+        {
+        if($sqlid == $acid)
+        {
+            echo 'selected';
+        }
+        }
     }
-  }
-  ?>
+
+    //update functions
+    function updateasso($tablename, $shirt_id, $sltcc, $columnname, $dbc)
+    {
+        $del_qry = mysqli_query($dbc, "DELETE FROM $tablename WHERE tshirt_id=".$shirt_id);
+        if(del_qry)
+        {
+        foreach ($sltcc as $value)
+        {
+            $res_up_ = mysqli_query($dbc, "INSERT INTO $tablename(tshirt_id, $columnname) VALUES($shirt_id, '$value');");
+        }
+        }
+        if($res_up_)
+        {
+        mysqli_commit($dbc);
+        }
+        else{
+        mysqli_rollback($dbc);
+        echo mysqli_error($dbc);
+        }
+    }
+    ?>
 <!--/functions-->
 
 <!--Update T-Shirt function-->
-  <?php
+    <?php
     if(isset($_GET['uptshirt']))
     {
+      
     //Retrieve T-Shirt id,brand,category,design,type,size
       $shirt_id_up = $_GET['uptshirt'];
+      //For form submit action attr
+      $form_apath = "?uptshirt=".$shirt_id_up;
       $tshirt_sel_sql = "SELECT * FROM tbl_tshirt WHERE tshirt_id =".$shirt_id_up;
       $tshirt_sel_qry = mysqli_query($dbc, $tshirt_sel_sql);
       $res_sel = mysqli_fetch_assoc($tshirt_sel_qry);
@@ -103,6 +123,8 @@ error_reporting(E_ALL & ~E_WARNING);
         $shirtdesign_av = $res_sel['design_id'];
         $shirttype_av = $res_sel['type_id'];
         $shirtsize_av = $res_sel['size_id'];
+        $shirtimgf_av = $res_sel['img_front'];
+        $shirtimgb_av = $res_sel['img_back'];
       }
     //Retrieve T-Shirt id,brand,category,design,type,size//
 
@@ -160,9 +182,9 @@ error_reporting(E_ALL & ~E_WARNING);
     }
   ?>
 <!--/Update T-Shirt function-->
-      
+
 <!-- Form Validation PHP-->
-      <?php
+    <?php
         if(isset($_POST['btnsubas']))
         {
           $arr_err = array();
@@ -242,16 +264,17 @@ error_reporting(E_ALL & ~E_WARNING);
                 $('#imgfval').modal({show: true});
                   }); </script>";
             }
-
           }
           else
           {
             $img_f_err = "Image Front Upload Error";
-            $arr_err[] = "Image Front Upload Error";
-            echo "<script> $(document).ready(function(){
-              $('#imgfval').modal({show: true});
-                }); </script>";
-            //echo "<script>alert('Error Uploading Image Front: ".$_FILES['uplbimg']['error']."');</script>";
+            if(empty($_GET['uptshirt']))
+            {
+              $arr_err[] = "Image Front Upload Error";
+              echo "<script> $(document).ready(function(){
+                $('#imgfval').modal({show: true});
+                  }); </script>";
+            }
           }
           
           if ($_FILES['uplbimg']['error']== 0)
@@ -287,11 +310,13 @@ error_reporting(E_ALL & ~E_WARNING);
           else
           {
             $img_b_err = "Image Back Upload Error";
-            $arr_err[] = "Image Back Upload Error";
-            echo "<script> $(document).ready(function(){
-              $('#imgbval').modal({show: true});
-                }); </script>";
-            //echo "<script>alert('Error Uploading Image Back: ".$_FILES['uplbimg']['error']."');</script>";
+            if(empty($_GET['uptshirt']))
+            {
+              $arr_err[] = "Image Back Upload Error";
+              echo "<script> $(document).ready(function(){
+                $('#imgbval').modal({show: true});
+                  }); </script>";
+            }
           }
 
 
@@ -370,127 +395,237 @@ error_reporting(E_ALL & ~E_WARNING);
           
             mysqli_autocommit($dbc,FALSE);
 
-
-
-            $insert_qry= "INSERT INTO `tbl_tshirt` (`brand_id`, `category_id`, `design_id`, `type_id`, `img_front`, `img_back`, `price`, `size_id`, `quantity`) VALUES ('$brand', '$category', '$design', '$type', '$target_file_imgf', '$target_file_imgb', '$price', '$size', '$qty');";
-            $insert_qry_exe = mysqli_query($dbc, $insert_qry);
-
-            
-
-            if($insert_qry_exe)
-            {
-              //take the last t-shirt generated id
-              $shirt_id = mysqli_insert_id($dbc);
-             
-              if(isset($color_cc))
+  //Update Tshirt
+              if(isset($_GET['uptshirt']))
               {
-                foreach ($color_cc as $color)
+                //update tshirt details from tbl_shirt
+                $sql_update_tshirt = "UPDATE tbl_tshirt SET brand_id = '$brand', category_id='$category', design_id='$design', type_id='$type', price='$price', size_id='$size', quantity='$qty' ";
+
+                //check if imgf is changed
+                if(isset($target_file_imgf))
                 {
-                  $res_color = mysqli_query($dbc, "INSERT INTO tbl_tshirt_color(tshirt_id, color_id) VALUES('$shirt_id', '$color');");
+                  $sql_update_tshirt .= " ,img_front='$target_file_imgf'";
                 }
-              }
-              else
-              {
-                mysqli_rollback($dbc);
-              }
 
-              //Features Validation + insert to features associative
-              if(isset($features_cc))
-              {
-                foreach ($features_cc as $feature)
+                //check if imgb is changed
+                if(isset($target_file_imgb))
                 {
-                  $res_feature = mysqli_query($dbc, "INSERT INTO tbl_tshirt_features(tshirt_id, feature_id) VALUES('$shirt_id', '$feature');");
+                  unlink($shirtimgb_av);
+                  $sql_update_tshirt .= " ,img_back='$target_file_imgb'";
                 }
-              }
-              else
-              {
-                mysqli_rollback($dbc);
-              }
 
-              // Fabric Validation + insert to fabric associative
-              if(isset($fabric_cc))
-              {
-                foreach ($fabric_cc as $fabric)
+                //Run query update
+                $sql_update_tshirt .= " WHERE tshirt_id=".$shirt_id_up;
+                $update_tshirt_qry = mysqli_query($dbc, $sql_update_tshirt);
+                if($update_tshirt_qry)
                 {
-                  $res_fabric = mysqli_query($dbc, "INSERT INTO tbl_tshirt_fabric(tshirt_id, fabric_id) VALUES('$shirt_id', '$fabric');");
-                }
-              }
-              else
-              {
-                mysqli_rollback($dbc);
-              }
-
-            // Pattern Validation + insert to features associative
-             if(isset($pattern_cc))
-             {
-               foreach ($pattern_cc as $pattern)
-               {
-                 $res_pattern = mysqli_query($dbc, "INSERT INTO tbl_tshirt_pattern(tshirt_id, pattern_id) VALUES('$shirt_id', '$pattern');");
-               }
-
-             }
-             else
-             {
-               //$pattern_err = "Please enter a pattern";
-               mysqli_rollback($dbc);
-             }           
-
-             //pattern associative insert check
-              if($res_color && $res_feature && $res_fabric && $res_pattern)
-              {
-                move_uploaded_file($_FILES["uplfimg"]["tmp_name"], $target_file_imgf);
-                move_uploaded_file($_FILES["uplbimg"]["tmp_name"], $target_file_imgb);
-
-                $imgf = new claviska\SimpleImage($target_file_imgf);
-                try {
-                  $imgf->fromFile($target_file_imgf);
-                  $imgf_path = "../images/tshirt/tshirtimgf".date("Y.m.d").".".$imageFileType_imgf;
-                  unlink($target_file_imgf);
-                  $imgf->resize(680, 680)->toFile($imgf_path);
+                  unlink($shirtimgf_av);
+                  //Update tshirt colors 
+                    updateasso("tbl_tshirt_color", $shirt_id_up, $color_cc, "color_id", $dbc);
+                  //Update tshirt colors//
+                    
+                  //Update tshirt features 
+                    updateasso("tbl_tshirt_features", $shirt_id_up, $features_cc, "feature_id", $dbc);
+                  //Update tshirt features//
                   
-                  } catch(Exception $err) {
-                  echo "<script>alert('Error: '" .$e->getMessage()."');</script>";
-                  }
-                
-                  $imgb = new claviska\SimpleImage($target_file_imgb);
+                  //Update tshirt fabric 
+                  updateasso("tbl_tshirt_fabric", $shirt_id_up, $fabric_cc, "fabric_id", $dbc);
+                  //Update tshirt colors//
+
+                  //Update tshirt pattern 
+                  updateasso("tbl_tshirt_pattern", $shirt_id_up, $pattern_cc, "pattern_id", $dbc);
+                  //Update tshirt pattern//
+
+                  
+
+                  //Image font move to img location + resize
+                  if(isset($target_file_imgf) && $update_tshirt_qry)
+                  {
+                    move_uploaded_file($_FILES["uplfimg"]["tmp_name"], $target_file_imgf);
+
+                    $imgupf = new claviska\SimpleImage($target_file_imgf);
+                    
                   try {
-                    $imgb->fromFile($target_file_imgb);
-                    $imgb_path = "../images/tshirt/tshirtimgb".date("Y.m.d").".".$imageFileType_imgb;
-                    unlink($target_file_imgb);
-                    $imgb->resize(680, 680)->toFile($imgb_path);
+                    $imgupf->fromFile($target_file_imgf);
+                    $imgupf_path = trim("../images/tshirt/uptshirtimgf".uniqid().".".$imageFileType_imgf);
+                    unlink($target_file_imgf);
+                    $imgupf->resize(680, 680)->toFile($imgupf_path);
                     
                     } catch(Exception $err) {
-                    echo "<script>alert('Error: '" .$e->getMessage()."');</script>";
+                    echo "<script>alert('Error: '" .$err->getMessage()."');</script>";
                     }
-                
-                  $img_update_sql = "UPDATE tbl_tshirt SET img_front='$imgf_path', img_back='$imgb_path' WHERE tshirt_id = '$shirt_id'";
-                  $img_update_qry = mysqli_query($dbc, $img_update_sql);
-                  
-                    if(img_update_qry)
-                    {
-                      echo "<script> $(document).ready(function(){
-                        $('#addshirtsuc').modal({show: true});
-                          }); </script>";
-                      mysqli_commit($dbc);
-                    }
-                    else
-                    {
-                      mysqli_rollback($dbc);
-                      echo "<script>alert('fail');</script>";
-                    }
-              }
 
+                    $imgf_pUp = mysqli_query($dbc, "UPDATE tbl_tshirt SET img_front = '$imgupf_path' WHERE tshirt_id=$shirt_id_up");
+                  }
+
+                  //Image back move to img location + back
+                  if(isset($target_file_imgb) && $update_tshirt_qry)
+                  {
+                    move_uploaded_file($_FILES["uplbimg"]["tmp_name"], $target_file_imgb);
+
+                    $imgupb = new claviska\SimpleImage($target_file_imgb);
+                  try {
+                    $imgupb->fromFile($target_file_imgb);
+                    $imgupb_path = trim("../images/tshirt/uptshirtimgb".uniqid().".".$imageFileType_imgb);
+                    unlink($target_file_imgb);
+                    $imgupb->resize(680, 680)->toFile($imgupb_path);
+                    
+                    } catch(Exception $err) {
+                    echo "<script>alert('Error: '" .$err->getMessage()."');</script>";
+                    }
+
+                    $imgb_pUp = mysqli_query($dbc, "UPDATE tbl_tshirt SET img_back = '$imgupb_path' WHERE tshirt_id=$shirt_id_up");
+                  }
+                  
+                  echo "<script>alert('done');</script>";
+                  mysqli_commit($dbc);
+                  echo "<script>window.location.href='manageTshirt.php';</script>";
+                }
+                else
+                {
+                  echo "fail";
+                  echo mysqli_error($dbc);
+                }
+              }
+  //Update Tshirt//
+              else
+              {
+  //Insert new Tshirt
+              $insert_qry= "INSERT INTO `tbl_tshirt` (`brand_id`, `category_id`, `design_id`, `type_id`, `img_front`, `img_back`, `price`, `size_id`, `quantity`) VALUES ('$brand', '$category', '$design', '$type', '$target_file_imgf', '$target_file_imgb', '$price', '$size', '$qty');";
+              $insert_qry_exe = mysqli_query($dbc, $insert_qry);
+
+              if($insert_qry_exe)
+              {
+                //take the last t-shirt generated id
+                $shirt_id = mysqli_insert_id($dbc);
+              
+                if(isset($color_cc))
+                {
+                  foreach ($color_cc as $color)
+                  {
+                    $res_color = mysqli_query($dbc, "INSERT INTO tbl_tshirt_color(tshirt_id, color_id) VALUES('$shirt_id', '$color');");
+                  }
+                }
+                else
+                {
+                  mysqli_rollback($dbc);
+                }
+
+                //Features Validation + insert to features associative
+                if(isset($features_cc))
+                {
+                  foreach ($features_cc as $feature)
+                  {
+                    $res_feature = mysqli_query($dbc, "INSERT INTO tbl_tshirt_features(tshirt_id, feature_id) VALUES('$shirt_id', '$feature');");
+                  }
+                }
+                else
+                {
+                  mysqli_rollback($dbc);
+                }
+
+                // Fabric Validation + insert to fabric associative
+                if(isset($fabric_cc))
+                {
+                  foreach ($fabric_cc as $fabric)
+                  {
+                    $res_fabric = mysqli_query($dbc, "INSERT INTO tbl_tshirt_fabric(tshirt_id, fabric_id) VALUES('$shirt_id', '$fabric');");
+                  }
+                }
+                else
+                {
+                  mysqli_rollback($dbc);
+                }
+
+              // Pattern Validation + insert to features associative
+              if(isset($pattern_cc))
+              {
+                foreach ($pattern_cc as $pattern)
+                {
+                  $res_pattern = mysqli_query($dbc, "INSERT INTO tbl_tshirt_pattern(tshirt_id, pattern_id) VALUES('$shirt_id', '$pattern');");
+                }
+
+              }
+              else
+              {
+                //$pattern_err = "Please enter a pattern";
+                mysqli_rollback($dbc);
+              }           
+
+              //pattern associative insert check
+                if($res_color && $res_feature && $res_fabric && $res_pattern)
+                {
+                  if ($_FILES['uplbimg']['error']== 0)
+                  {
+                    move_uploaded_file($_FILES["uplfimg"]["tmp_name"], $target_file_imgf);
+                  }
+                  if ($_FILES['uplbimg']['error']== 0)
+                  {
+                    move_uploaded_file($_FILES["uplbimg"]["tmp_name"], $target_file_imgb);
+                  }
+                  
+                  
+
+                  $imgf = new claviska\SimpleImage($target_file_imgf);
+                  try {
+                    $imgf->fromFile($target_file_imgf);
+                    $imgf_path = "../images/tshirt/tshirtimgfin".uniqid().".".$imageFileType_imgf;
+                    unlink($target_file_imgf);
+                    $imgf->resize(680, 680)->toFile($imgf_path);
+                    
+                    } catch(Exception $err) {
+                    echo "<script>alert('Error: '" .$err->getMessage()."');</script>";
+                    }
+                  
+                    $imgb = new claviska\SimpleImage($target_file_imgb);
+                    try {
+                      $imgb->fromFile($target_file_imgb);
+                      $imgb_path = "../images/tshirt/tshirtimgbin".uniqid().".".$imageFileType_imgb;
+                      unlink($target_file_imgb);
+                      $imgb->resize(680, 680)->toFile($imgb_path);
+                      
+                      } catch(Exception $err) {
+                      echo "<script>alert('Error: '" .$err->getMessage()."');</script>";
+                      }
+                  
+                    $img_update_sql = "UPDATE tbl_tshirt SET img_front='$imgf_path', img_back='$imgb_path' WHERE tshirt_id = '$shirt_id'";
+                    $img_update_qry = mysqli_query($dbc, $img_update_sql);
+                    
+                      if(img_update_qry)
+                      {
+                        echo "<script> $(document).ready(function(){
+                          $('#addshirtsuc').modal({show: true});
+                            }); </script>";
+                        mysqli_commit($dbc);
+                        echo "<script>window.location.href='manageTshirt.php';</script>";
+                      }
+                      else
+                      {
+                        mysqli_rollback($dbc);
+                        echo "<script>alert('fail');</script>";
+                      }
+                }
+              }
+  //Insert new Tshirt//
             }
+
           }
         }
-      ?>
+        ?>
 <!--/Form Validation PHP-->
+    <body>
+
+
+        <div class="wrapper">
+            <?php require('../includes/admin_sidenav.php') ?>
+
+<!-- Page Content Holder -->
+            <div id="content">
+                <?php require('../includes/admin_navbar.php'); ?>
 
 <!--Form Frontend-->
-          <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data" >
-            <div class="container-fluid">
-              <!-- <div class="row"> -->
-                <!-- <div class="col-sm"> -->
+    <form action="<?php echo $_SERVER['PHP_SELF'].@$form_apath; ?>" method="POST" enctype="multipart/form-data" >
+    <div class="container-fluid">
     <table id="adshirttbl" class="table-responsive">
       <tr>
         <td>
@@ -694,6 +829,7 @@ error_reporting(E_ALL & ~E_WARNING);
                   <span class="custom-file-container__custom-file__custom-file-control"></span>
               </label>
               <br>
+              
               <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">Image Front Preview</a>
                 <div id="light" class="custom-file-container__image-preview"><a class="closebtn" href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">Close</a></div>
                 </div>
@@ -822,17 +958,7 @@ error_reporting(E_ALL & ~E_WARNING);
   <!--/Button Field-->
         </td>
       </tr>
-          <!--Clear Script Field-->
-                  <script>
-                    function clrfrm()
-                    {
-                      location.reload();
-                    }
-                  </script>
-          <!--/Clear Script Field-->
     </table>
-        <!-- </div> -->
-        <!-- </div> -->
       </div>
       </form>
 <!--/Form Frontend-->
@@ -840,7 +966,7 @@ error_reporting(E_ALL & ~E_WARNING);
 <!-- Modals-->
   <!--Add Brand modal form-->
     <!--Brand Modal Body -->
-      <div class="modal fade" id="brandmodal" tabindex="-1" role="dialog" aria-labelledby="mybrandmodal" aria-hidden="true">
+    <div class="modal fade" id="brandmodal" tabindex="-1" role="dialog" aria-labelledby="mybrandmodal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -1682,6 +1808,11 @@ error_reporting(E_ALL & ~E_WARNING);
       var upload2 = new FileUploadWithPreview('imgb');
     </script>
 <!-- /Image Preview Script-->
-    <?php require('../includes/admin_footer.php'); ?>
-  </body>
+
+<div class="line"></div>     
+            </div>
+<!-- /Page Content Holder -->
+        </div>
+    
+    </body>
 </html>

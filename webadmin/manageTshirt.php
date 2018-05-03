@@ -6,26 +6,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>ShirtPrints | Manage T-Shirt</title>
-    <title>ShirtPrints - Add T-Shirt Form</title>
+<!--Import-->
     <link rel="stylesheet" href="../css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="../css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="../css/bootstrap337.min.css">
+    <link rel="stylesheet" href="../css/dataTables.bootstrap337.min.css">
+    <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css">
+
     <script type="text/javascript" src="../js/jquery.min.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="../js/jquery.dataTables.min.js"></script>
-    <script src="../js/dataTables.bootstrap4.min.js"></script>
+    <script src="../js/dataTables.bootstrap337.min.js"></script>
+    <script src="../js/bootstrap337.min.js"></script>
+    <script src="../js/popper.js"></script>
     <script src="../js/main_admin.js"></script>
-    <script src="../js/dataTables.responsive.min.js"></script>
+<!--/Import-->
 </head>
 <body>
-    <?php require('../includes/admin_navbar.php'); ?>
+<?php
+
+        //Delete tshirt 
+        if(isset($_GET['deltshirt']))
+        {
+            $shirt_id = $_GET['deltshirt'];
+
+            $tshirt_sel_qry = mysqli_query($dbc, "SELECT img_front, img_back FROM tbl_tshirt WHERE tshirt_id=".$shirt_id.";");
+            if($tshirt_sel_qry)
+            {
+                //select old img path
+                $res_tshirt_sel = mysqli_fetch_array($tshirt_sel_qry, MYSQLI_ASSOC);
+                $sel_img_front = $res_tshirt_sel['img_front'];
+                $sel_img_back = $res_tshirt_sel['img_back'];
+
+                //delete tshirt row
+                $del_tshirt_sql = "DELETE FROM tbl_tshirt WHERE tshirt_id=".$shirt_id.";";
+                $del_tshirt_qry = mysqli_query($dbc, $del_tshirt_sql);
+
+                
+
+                if($del_tshirt_qry)
+                {
+                    //delete old img of tshirt deleted
+                    unlink($sel_img_front);
+                    unlink($sel_img_back);
+                    echo "<script>window.location.href='manageTshirt.php';</script>";
+                }
+            }
+        }
+    ?>
+
+    <div class="wrapper">
+    <!-- Include side nav -->
+            <?php require('../includes/admin_sidenav.php') ?>
+
+<!-- Page Content Holder -->
+            <div id="content">
+                <?php require('../includes/admin_navbar.php'); ?>
+<!--Title of Datatable-->
         <div class="row">
             <div class="col-lg-12">
                 <h2>T-Shirt Stock</h2>
             </div>
         </div>
-        <table id="mtstbl" class="display responsive nowrap">
+<!--/Title of Datatable-->
+
+<!--Datatable-->
+        <table id="mtstbl" class="table nowrap">
         <thead>
             <tr>
                 <th>Brand</th>
@@ -36,6 +81,7 @@
                 <th>Colors</th>
                 <th>Fabrics</th>
                 <th>Features</th>
+                <th>Images</th>
                 <th>Size</th>
                 <th>Price(MUR)</th>
                 <th>Quantity</th>
@@ -44,10 +90,13 @@
         </thead>
         <tbody>
         <?php 
+        //Display Query
             $tshirt_select = "SELECT 
             ts.tshirt_id AS tshirt_id,
             ts.price AS Price,
             ts.quantity AS Quantity,
+            ts.img_front AS imgf,
+            ts.img_back AS imgb,
             GROUP_CONCAT(DISTINCT tp.pattern) AS Pattern, 
             GROUP_CONCAT(DISTINCT tc.color) As Color,
             GROUP_CONCAT(DISTINCT tf.fabric) As Fabric,
@@ -71,6 +120,8 @@
             
             while($row_msa = mysqli_fetch_array($tshirt_select_qry))
             {
+                $imgf = $row_msa['imgf'];
+                $imgb = $row_msa['imgb'];
                 ?>
                 <tr>
                 <td><?php echo $row_msa['Brand'];?> </td>
@@ -81,17 +132,29 @@
                 <td><?php echo $row_msa['Color'];?> </td>
                 <td><?php echo $row_msa['Fabric'];?> </td>
                 <td><?php echo $row_msa['Feature'];?> </td>
+                <td>
+                <a tabindex="0" class="btn btn-lg btn-danger btn-pop" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-content="<img src='<?php echo $imgf;?>' width='600' height='300'>">
+                Front
+                </a>
+                <a tabindex="0" class="btn btn-lg btn-danger btn-pop" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-content="<img src='<?php echo $imgb; ?>' width='600' height='300'>">
+                Back
+                </a>
+                </td>
                 <td><?php echo $row_msa['Size'];?> </td>
                 <td><?php echo $row_msa['Price'];?> </td>
                 <td><?php echo $row_msa['Quantity'];?> </td>
-                <td><a href="admin_home.php?uptshirt='<?php echo $row_msa['tshirt_id'] ?>'" class="btn btn-info">Modify</a> | <a href="#" class="btn btn-warning">Delete</a></td>
+                <td><a href="crudtshirt.php?uptshirt='<?php echo $row_msa['tshirt_id'] ?>'" class="btn btn-info">Modify</a> | 
+                <a href="manageTshirt.php?deltshirt='<?php echo $row_msa['tshirt_id'] ?>'" class="btn btn-warning">Delete</a></td>
                 </tr>
                 <?php
             }
         ?>
         </tbody>
         </table>
-    <?php require('../includes/admin_footer.php');?>
+<!--/Datatable-->
+        <div class="line"></div> 
+</div>
+</div>
     
 </body>
 </html>
