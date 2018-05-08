@@ -1,6 +1,6 @@
 <?php
   require('../../includes/dbconnect.php');
-  $addcat = $_POST["add_cat"];
+  $addcat = $_POST["add_value"];
   if(isset($addcat))
   {
     $sql ="SELECT * FROM tbl_category WHERE cat_name ='$addcat';";

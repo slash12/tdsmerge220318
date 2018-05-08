@@ -1,6 +1,6 @@
 <?php
   require('../../includes/dbconnect.php');
-  $addbrand = $_POST["add_size"];
+  $addbrand = $_POST["add_value"];
   if(isset($addbrand))
   {
     $sql ="SELECT * FROM tbl_size WHERE size ='$addbrand';";

@@ -1,6 +1,6 @@
 <?php
   require('../../includes/dbconnect.php');
-  $adddesign = $_POST["add_design"];
+  $adddesign = $_POST["add_value"];
   if(isset($adddesign))
   {
     $sql ="SELECT * FROM tbl_design WHERE design ='$adddesign';";

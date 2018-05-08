@@ -1,6 +1,6 @@
 <?php
   require('../../includes/dbconnect.php');
-  $addpattern = $_POST["add_pattern"];
+  $addpattern = $_POST["add_value"];
   if(isset($addpattern))
   {
     $sql ="SELECT * FROM tbl_pattern WHERE pattern ='$addpattern';";

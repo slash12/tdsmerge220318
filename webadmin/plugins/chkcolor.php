@@ -1,6 +1,6 @@
 <?php
   require('../../includes/dbconnect.php');
-  $addcolor = $_POST["add_color"];
+  $addcolor = $_POST["add_value"];
   if(isset($addcolor))
   {
     $sql ="SELECT * FROM tbl_color WHERE color ='$addcolor';";

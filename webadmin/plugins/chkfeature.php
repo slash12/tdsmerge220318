@@ -1,6 +1,6 @@
 <?php
   require('../../includes/dbconnect.php');
-  $addfeature = $_POST["add_feature"];
+  $addfeature = $_POST["add_value"];
   if(isset($addfeature))
   {
     $sql ="SELECT * FROM tbl_feature WHERE feature ='$addfeature';";

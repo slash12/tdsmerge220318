@@ -1,6 +1,6 @@
 <?php
   require('../../includes/dbconnect.php');
-  $addfabric = $_POST["add_fabric"];
+  $addfabric = $_POST["add_value"];
   if(isset($addfabric))
   {
     $sql ="SELECT * FROM tbl_fabric WHERE fabric ='$addfabric';";

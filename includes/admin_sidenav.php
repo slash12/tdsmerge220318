@@ -12,6 +12,9 @@
             </ul>
         </li>
         <li>
+            <a href="#">Manage Brand</a>
+        </li>
+        <li>
             <a href="#">About</a>
             <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Pages</a>
             <ul class="collapse list-unstyled" id="pageSubmenu">

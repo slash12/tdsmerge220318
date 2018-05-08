@@ -970,22 +970,22 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Add Brand</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
               </button>
+              <h4 class="modal-title">Add Brand</h4>
             </div>
             <div class="modal-body">
-              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text">Brand</span>
-                  </div>
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form-inline">
+                <div class="form-group mb-3">
+                  <span class="input-group-text">Brand</span>
                   <input type="text" class="form-control" placeholder="Brand.." aria-label="brand" name="txtabrand" id="txtabrand">
-                  <input type="submit" class="btn btn-primary" id="btnabrand" name="btnabrand" Value="Add Brand">
                 </div>
-                <span id="brand_availability"></span>
+                <input type="submit" class="btn btn-primary" id="btnabrand" name="btnabrand" Value="Add Brand">
               </form>
+            </div>
+            <div class="modal-footer">
+            <span id="brand_availability"></span>
             </div>
           </div>
         </div>
@@ -994,40 +994,7 @@ error_reporting(E_ALL & ~E_WARNING);
 
     <!--Brand AJAX Validation (Uniqueness)-->
       <script>
-        $(document).ready(function(){
-          document.getElementById("btnabrand").disabled = true;
-          $('#txtabrand').blur(function(){
-            var abrand = $(this).val();
-            $.ajax({
-              url: "plugins/chkbrand.php",
-              method: "POST",
-              data: {add_brand:abrand},
-              success:function(html)
-              {
-                if(html == "true")
-                {
-                  $('#brand_availability').html('<span class="text-danger">Brand already existed!</span>');
-                  document.getElementById("btnabrand").disabled = true;
-                }
-
-                if(html == "false")
-                {
-                  if(abrand == "")
-                  {
-                    $('#brand_availability').html('<span class="text-danger">Enter a Brand!</span>');
-                    document.getElementById("btnabrand").disabled = true;
-                  }
-                  else
-                  {
-                    $('#brand_availability').html('<span></span>');
-                    document.getElementById("btnabrand").disabled = false;
-                  }
-
-                }
-              }
-            })
-          })
-        });
+      uniqueval("btnabrand", '#txtabrand', "plugins/chkbrand.php", '#brand_availability', "Brand already exists!", "Enter a Brand");
       </script>
     <!--/Brand AJAX Validation (Uniqueness)-->
 
@@ -1054,22 +1021,22 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Add Category</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
+              <h4 class="modal-title">Add Category</h4>
             </div>
             <div class="modal-body">
-              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form-inline">
+                <div class="form-group mb-3">
                     <span class="input-group-text">Category</span>
-                  </div>
                   <input type="text" class="form-control" name="txtacat" id="txtacat" placeholder="Category..">
-                  <input type="submit" class="btn btn-primary" name="btnacat" id="btnacat" value="Add Category">
                 </div>
-                <span id="cat_availability"></span>
+                <input type="submit" class="btn btn-primary" name="btnacat" id="btnacat" value="Add Category">
               </form>
+            </div>
+            <div class="modal-footer">
+            <span id="cat_availability"></span>
             </div>
           </div>
         </div>
@@ -1078,47 +1045,48 @@ error_reporting(E_ALL & ~E_WARNING);
 
     <!--Category AJAX Validation (Uniqueness)-->
       <script>
-        $(document).ready(function(){
-          document.getElementById("btnacat").disabled = true;
-          $('#txtacat').blur(function(){
-            var acat = $(this).val();
-            $.ajax({
-              url: "plugins/chkcat.php",
-              method: "POST",
-              data: {add_cat:acat},
-              success:function(html)
-              {
-                if(html == "true")
-                {
-                  if(acat == "")
-                  {
-                    $('#cat_availability').html('<span class="text-danger">Enter a Category!</span>');
-                    document.getElementById("btnacat").disabled = true;
-                  }
-                  else
-                  {
-                    $('#cat_availability').html('<span class="text-danger">Category already existed!</span>');
-                    document.getElementById("btnacat").disabled = true;
-                  }
-                }
+      uniqueval("btnacat", '#txtacat', "plugins/chkcat.php", '#cat_availability', "Category already exists!", "Enter a Category");
+        // $(document).ready(function(){
+        //   document.getElementById("btnacat").disabled = true;
+        //   $('#txtacat').blur(function(){
+        //     var acat = $(this).val();
+        //     $.ajax({
+        //       url: "plugins/chkcat.php",
+        //       method: "POST",
+        //       data: {add_cat:acat},
+        //       success:function(html)
+        //       {
+        //         if(html == "true")
+        //         {
+        //           if(acat == "")
+        //           {
+        //             $('#cat_availability').html('<span class="text-danger">Enter a Category!</span>');
+        //             document.getElementById("btnacat").disabled = true;
+        //           }
+        //           else
+        //           {
+        //             $('#cat_availability').html('<span class="text-danger">Category already existed!</span>');
+        //             document.getElementById("btnacat").disabled = true;
+        //           }
+        //         }
 
-                if(html == "false")
-                {
-                  if(acat == "")
-                  {
-                    $('#cat_availability').html('<span class="text-danger">Enter a Category!</span>');
-                    document.getElementById("btnacat").disabled = true;
-                  }
-                  else
-                  {
-                    $('#cat_availability').html('<span></span>');
-                    document.getElementById("btnacat").disabled = false;
-                  }
-                }
-              }
-            })
-          })
-        });
+        //         if(html == "false")
+        //         {
+        //           if(acat == "")
+        //           {
+        //             $('#cat_availability').html('<span class="text-danger">Enter a Category!</span>');
+        //             document.getElementById("btnacat").disabled = true;
+        //           }
+        //           else
+        //           {
+        //             $('#cat_availability').html('<span></span>');
+        //             document.getElementById("btnacat").disabled = false;
+        //           }
+        //         }
+        //       }
+        //     })
+        //   })
+        // });
       </script>
     <!--/Category AJAX Validation (Uniqueness)-->
 
@@ -1145,23 +1113,22 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Add Color</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
+              <h4 class="modal-title">Add Color</h4>
             </div>
             <div class="modal-body">
-              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text">Color</span>
-                  </div>
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form-inline">
+                <div class="form-group mb-3">
+                  <span class="input-group-text">Color</span>
                   <input type="text" class="form-control" name="txtacolor" id="txtacolor" placeholder="Color..">
-                  <input type="text" class="form-control" name="txtaccolor" id="txtaccolor" placeholder="Color Code..">
                 </div>
                 <input type="submit" class="btn btn-primary" name="btnacolor" id="btnacolor" value="Add Color">
-                <span id="color_availability"></span>
               </form>
+            </div>
+            <div class="modal-footer">
+            <span id="color_availability"></span>
             </div>
           </div>
         </div>
@@ -1170,47 +1137,7 @@ error_reporting(E_ALL & ~E_WARNING);
 
     <!--Color AJAX Validation (Uniqueness)-->
       <script>
-        $(document).ready(function(){
-          document.getElementById("btnacolor").disabled = true;
-          $('#txtacolor').blur(function(){
-            var acolor = $(this).val();
-            $.ajax({
-              url: "plugins/chkcolor.php",
-              method: "POST",
-              data: {add_color:acolor},
-              success:function(html)
-              {
-                if(html == "true")
-                {
-                  if(acolor == "")
-                  {
-                    $('#color_availability').html('<span class="text-danger">Enter a Color!</span>');
-                    document.getElementById("btnacolor").disabled = true;
-                  }
-                  else
-                  {
-                    $('#color_availability').html('<span class="text-danger">Color already existed!</span>');
-                    document.getElementById("btnacolor").disabled = true;
-                  }
-                }
-
-                if(html == "false")
-                {
-                  if(acolor == "")
-                  {
-                    $('#color_availability').html('<span class="text-danger">Enter a Color!</span>');
-                    document.getElementById("btnacolor").disabled = true;
-                  }
-                  else
-                  {
-                    $('#color_availability').html('<span></span>');
-                    document.getElementById("btnacolor").disabled = false;
-                  }
-                }
-              }
-            })
-          })
-        });
+        uniqueval("btnacolor", '#txtacolor', "plugins/chkcolor.php", '#color_availability', "Color already exists!", "Enter a Color");
       </script>
     <!--Color AJAX Validation (Uniqueness)-->
 
@@ -1219,10 +1146,8 @@ error_reporting(E_ALL & ~E_WARNING);
       if(isset($_POST['btnacolor']))
       {
         $addcolor_cc = trim($_POST['txtacolor']);
-        $addccolor_cc = trim($_POST['txtaccolor']);
         $addcolor = mysqli_real_escape_string($dbc, $addcolor_cc);
-        $addccolor = mysqli_real_escape_string($dbc, $addccolor_cc);
-        $addcolor_qry = mysqli_query($dbc, "INSERT INTO tbl_color(color, color_code) VALUES('$addcolor', '$addccolor');");
+        $addcolor_qry = mysqli_query($dbc, "INSERT INTO tbl_color(color) VALUES('$addcolor');");
         if($addcolor_qry)
         {
           echo "<meta http-equiv='refresh' content='0'>";
@@ -1239,22 +1164,22 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Add Design</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
+              <h4 class="modal-title">Add Design</h4>
             </div>
             <div class="modal-body">
-              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form-inline">
+                <div class="form-group mb-3">
                     <span class="input-group-text">Design</span>
-                  </div>
                   <input type="text" class="form-control" name="txtadesign" id="txtadesign" placeholder="Design..">
-                  <input type="submit" class="btn btn-primary" name="btnadesign" id="btnadesign" value="Add Design">
                 </div>
-                <span id="design_availability"></span>
+                <input type="submit" class="btn btn-primary" name="btnadesign" id="btnadesign" value="Add Design">
               </form>
+            </div>
+            <div class="modal-footer">
+            <span id="design_availability"></span>
             </div>
           </div>
         </div>
@@ -1263,47 +1188,7 @@ error_reporting(E_ALL & ~E_WARNING);
 
     <!--Design AJAX Validation (Uniqueness)-->
       <script>
-        $(document).ready(function(){
-          document.getElementById("btnadesign").disabled = true;
-          $('#txtadesign').blur(function(){
-            var adesign = $(this).val();
-            $.ajax({
-              url: "plugins/chkdesign.php",
-              method: "POST",
-              data: {add_design:adesign},
-              success:function(html)
-              {
-                if(html == "true")
-                {
-                  if(adesign == "")
-                  {
-                    $('#design_availability').html('<span class="text-danger">Enter a Design!</span>');
-                    document.getElementById("btnadesign").disabled = true;
-                  }
-                  else
-                  {
-                    $('#design_availability').html('<span class="text-danger">Design already existed!</span>');
-                    document.getElementById("btnadesign").disabled = true;
-                  }
-                }
-
-                if(html == "false")
-                {
-                  if(adesign == "")
-                  {
-                    $('#design_availability').html('<span class="text-danger">Enter a Design!</span>');
-                    document.getElementById("btnadesign").disabled = true;
-                  }
-                  else
-                  {
-                    $('#design_availability').html('<span></span>');
-                    document.getElementById("btnadesign").disabled = false;
-                  }
-                }
-              }
-            })
-          })
-        });
+        uniqueval("btnadesign", '#txtadesign', "plugins/chkdesign.php", '#design_availability', "Design already exists!", "Enter a Design");
       </script>
     <!--/Design AJAX Validation (Uniqueness)-->
 
@@ -1330,22 +1215,22 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Add Feature</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
+              <h4 class="modal-title">Add Feature</h4>
             </div>
             <div class="modal-body">
-              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form-inline">
+                <div class="form-group mb-3">
                     <span class="input-group-text">Feature</span>
-                  </div>
                   <input type="text" class="form-control" name="txtafeature" id="txtafeature" placeholder="Feature..">
                   <input type="submit" class="btn btn-primary" name="btnafeature" id="btnafeature" value="Add Feature">
                 </div>
-                <span id="feature_availability"></span>
               </form>
+            </div>
+            <div class="modal-footer">
+            <span id="feature_availability"></span>
             </div>
           </div>
         </div>
@@ -1354,47 +1239,7 @@ error_reporting(E_ALL & ~E_WARNING);
 
     <!--Feature AJAX Validation (Uniqueness)-->
       <script>
-        $(document).ready(function(){
-          document.getElementById("btnafeature").disabled = true;
-          $('#txtafeature').blur(function(){
-            var afeature = $(this).val();
-            $.ajax({
-              url: "plugins/chkfeature.php",
-              method: "POST",
-              data: {add_feature:afeature},
-              success:function(html)
-              {
-                if(html == "true")
-                {
-                  if(afeature == "")
-                  {
-                    $('#feature_availability').html('<span class="text-danger">Enter a Feature!</span>');
-                    document.getElementById("btnafeature").disabled = true;
-                  }
-                  else
-                  {
-                    $('#feature_availability').html('<span class="text-danger">Feature already existed!</span>');
-                    document.getElementById("btnafeature").disabled = true;
-                  }
-                }
-
-                if(html == "false")
-                {
-                  if(afeature == "")
-                  {
-                    $('#feature_availability').html('<span class="text-danger">Enter a Feature!</span>');
-                    document.getElementById("btnafeature").disabled = true;
-                  }
-                  else
-                  {
-                    $('#feature_availability').html('<span></span>');
-                    document.getElementById("btnafeature").disabled = false;
-                  }
-                }
-              }
-            })
-          })
-        });
+        uniqueval("btnafeature", '#txtafeature', "plugins/chkfeature.php", '#feature_availability', "Feature already exists!", "Enter a Feature");
       </script>
     <!--/Feature AJAX Validation (Uniqueness)-->
 
@@ -1421,22 +1266,22 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Add Fabric</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
+              <h4 class="modal-title">Add Fabric</h4>
             </div>
             <div class="modal-body">
-              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
+              <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form-inline">
+                <div class="form-group mb-3">
                     <span class="input-group-text">Fabric</span>
-                  </div>
                   <input type="text" class="form-control" name="txtafabric" id="txtafabric" placeholder="Fabric..">
                   <input type="submit" class="btn btn-primary" name="btnafabric" id="btnafabric" value="Add Fabric">
                 </div>
-                <span id="fabric_availability"></span>
               </form>
+            </div>
+            <div class="modal-footer">
+            <span id="fabric_availability"></span>
             </div>
           </div>
         </div>
@@ -1445,47 +1290,7 @@ error_reporting(E_ALL & ~E_WARNING);
 
     <!--Fabric AJAX Validation (Uniqueness)-->
       <script>
-        $(document).ready(function(){
-          document.getElementById("btnafabric").disabled = true;
-          $('#txtafabric').blur(function(){
-            var afabric = $(this).val();
-            $.ajax({
-              url: "plugins/chkfabric.php",
-              method: "POST",
-              data: {add_fabric:afabric},
-              success:function(html)
-              {
-                if(html == "true")
-                {
-                  if(afabric == "")
-                  {
-                    $('#fabric_availability').html('<span class="text-danger">Enter a Fabric!</span>');
-                    document.getElementById("btnafabric").disabled = true;
-                  }
-                  else
-                  {
-                    $('#fabric_availability').html('<span class="text-danger">Fabric already existed!</span>');
-                    document.getElementById("btnafabric").disabled = true;
-                  }
-                }
-
-                if(html == "false")
-                {
-                  if(afabric == "")
-                  {
-                    $('#fabric_availability').html('<span class="text-danger">Enter a Fabric!</span>');
-                    document.getElementById("btnafabric").disabled = true;
-                  }
-                  else
-                  {
-                    $('#fabric_availability').html('<span></span>');
-                    document.getElementById("btnafabric").disabled = false;
-                  }
-                }
-              }
-            })
-          })
-        });
+        uniqueval("btnafabric", '#txtafabric', "plugins/chkfabric.php", '#fabric_availability', "Fabric already exists!", "Enter a Fabric");
       </script>
     <!--/Fabric AJAX Validation (Uniqueness)-->
 
@@ -1512,23 +1317,23 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Add Pattern</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
+              <h4 class="modal-title">Add Pattern</h4>
             </div>
             <div class="modal-body">
               <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data">
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
+                <div class="form-group mb-3">
                     <span class="input-group-text">Pattern</span>
-                  </div>
                   <input type="text" class="form-control" name="txtapattern" id="txtapattern" placeholder="Pattern..">
                   <input type="file" id="uplpatimg" name="uplpatimg">
                 </div>
-                <span id="pattern_availability"></span>
                 <input type="submit" class="btn btn-primary" name="btnapattern" id="btnapattern" value="Add Pattern">
               </form>
+            </div>
+            <div class="modal-footer">
+            <span id="pattern_availability"></span>
             </div>
           </div>
         </div>
@@ -1537,47 +1342,7 @@ error_reporting(E_ALL & ~E_WARNING);
 
     <!--Pattern AJAX Validation (Uniqueness)-->
       <script>
-        $(document).ready(function(){
-          document.getElementById("btnapattern").disabled = true;
-          $('#txtapattern').blur(function(){
-            var apattern = $(this).val();
-            $.ajax({
-              url: "plugins/chkpattern.php",
-              method: "POST",
-              data: {add_pattern:apattern},
-              success:function(html)
-              {
-                if(html == "true")
-                {
-                  if(apattern == "")
-                  {
-                    $('#pattern_availability').html('<span class="text-danger">Enter a Pattern!</span>');
-                    document.getElementById("btnapattern").disabled = true;
-                  }
-                  else
-                  {
-                    $('#pattern_availability').html('<span class="text-danger">Pattern already existed!</span>');
-                    document.getElementById("btnapattern").disabled = true;
-                  }
-                }
-
-                if(html == "false")
-                {
-                  if(apattern == "")
-                  {
-                    $('#pattern_availability').html('<span class="text-danger">Enter a Pattern!</span>');
-                    document.getElementById("btnapattern").disabled = true;
-                  }
-                  else
-                  {
-                    $('#pattern_availability').html('<span></span>');
-                    document.getElementById("btnapattern").disabled = false;
-                  }
-                }
-              }
-            })
-          })
-        });
+        uniqueval("btnapattern", '#txtapattern', "plugins/chkpattern.php", '#pattern_availability', "Pattern already exists!", "Enter a Pattern");
       </script>
     <!--/Pattern AJAX Validation (Uniqueness)-->
 
@@ -1650,23 +1415,22 @@ error_reporting(E_ALL & ~E_WARNING);
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title">Add Size</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
+                  <h4 class="modal-title">Add Size</h4>
                 </div>
                 <div class="modal-body">
-                  <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                    <div class="input-group mb-3">
-                      <div class="input-group-prepend">
+                  <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form-inline">
+                    <div class="form-group mb-3">
                         <span class="input-group-text">Size</span>
-                      </div>
                       <input type="text" class="form-control" placeholder="Size.." aria-label="brand" name="txtasize" id="txtasize">
-                      <input type="text" class="form-control" placeholder="Size Desc.." aria-label="brand" name="txtasizedes" id="txtasizedes">
                       <input type="submit" class="btn btn-primary" id="btnasize" name="btnasize" Value="Add Size">
                     </div>
-                    <span id="size_availability"></span>
                   </form>
+                </div>
+                <div class="modal-footer">
+                <span id="size_availability"></span>
                 </div>
               </div>
             </div>
@@ -1675,40 +1439,7 @@ error_reporting(E_ALL & ~E_WARNING);
         
     <!--Size AJAX Validation (Uniqueness)-->
       <script>
-        $(document).ready(function(){
-          document.getElementById("btnasize").disabled = true;
-          $('#txtasize').blur(function(){
-            var asize = $(this).val();
-            $.ajax({
-              url: "plugins/chksize.php",
-              method: "POST",
-              data: {add_size:asize},
-              success:function(html)
-              {
-                if(html == "true")
-                {
-                  $('#size_availability').html('<span class="text-danger">Size already existed!</span>');
-                  document.getElementById("btnasize").disabled = true;
-                }
-
-                if(html == "false")
-                {
-                  if(asize == "")
-                  {
-                    $('#size_availability').html('<span class="text-danger">Enter a Size!</span>');
-                    document.getElementById("btnasize").disabled = true;
-                  }
-                  else
-                  {
-                    $('#size_availability').html('<span></span>');
-                    document.getElementById("btnasize").disabled = false;
-                  }
-
-                }
-              }
-            })
-          })
-        });
+        uniqueval("btnasize", '#txtasize', "plugins/chksize.php", '#size_availability', "Size already exists!", "Enter a Size");
       </script>
     <!--/Size AJAX Validation (Uniqueness)-->
 
@@ -1717,10 +1448,8 @@ error_reporting(E_ALL & ~E_WARNING);
       if(isset($_POST['btnasize']))
       {
         $addsize_cc = trim($_POST['txtasize']);
-        $addsizedes_cc = trim($_POST['txtasizedes']);
         $addsize = mysqli_real_escape_string($dbc, $addsize_cc);
-        $addsizedes = mysqli_real_escape_string($dbc, $addsizedes_cc);
-        $addsize_qry = mysqli_query($dbc, "INSERT INTO tbl_size(size, size_desc) VALUES('$addsize', '$addsizedes');");
+        $addsize_qry = mysqli_query($dbc, "INSERT INTO tbl_size(size) VALUES('$addsize');");
         if($addsize_qry)
         {
           echo "<meta http-equiv='refresh' content='0'>";
@@ -1737,9 +1466,9 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog modal-sm">
           <div class="modal-content">
             <div class="modal-header">
-            <h4 class="text-warning">Error</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
+            <h4 class="text-warning">Error</h4>
             </div>
             <div class="modal-body">
               <p><?php echo $txt_err ?></p>
@@ -1754,9 +1483,9 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-            <h4 class="text-warning">Image Back Error</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
+            <h4 class="text-warning">Image Back Error</h4>
             </div>
             <div class="modal-body">
               <p><?php echo $img_b_err ?></p>
@@ -1771,9 +1500,9 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-            <h4 class="text-warning">Image Front Error</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
+            <h4 class="text-warning">Image Front Error</h4>
             </div>
             <div class="modal-body">
               <p><?php echo $img_f_err ?></p>
@@ -1788,9 +1517,9 @@ error_reporting(E_ALL & ~E_WARNING);
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-            <h4 class="text-success">Success!</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span></button>
+            <h4 class="text-success">Success!</h4>
             </div>
             <div class="modal-body">
               <p>New T-Shirt Added!</p>

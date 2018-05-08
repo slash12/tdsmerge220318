@@ -1,6 +1,6 @@
 <?php
   require('../../includes/dbconnect.php');
-  $addbrand = $_POST["add_brand"];
+  $addbrand = $_POST["add_value"];
   if(isset($addbrand))
   {
     $sql ="SELECT * FROM tbl_brand WHERE brand ='$addbrand';";

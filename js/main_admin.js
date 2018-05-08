@@ -7,6 +7,15 @@ $(document).ready(function () {
     });
 });
 
+//datatable for brand
+$(document).ready(function () {
+    $('#mbrdtbl').DataTable({
+        "pageLength": 6,
+        "autoWidth": false,
+        "bLengthChange": false,
+    });
+});
+
 //js for toggle side menu admin
 $(document).ready(function () {
     $("#sidebar").mCustomScrollbar({
@@ -39,3 +48,36 @@ $(document).ready(function () {
         html: true
     });
 });
+
+//JS uniqueness AJAX function
+function uniqueval(button_id, textbox_id, url, span_id, msg_err_unique, msg_err_empty) {
+    $(document).ready(function () {
+        document.getElementById(button_id).disabled = true;
+        $(textbox_id).blur(function () {
+            var value = $(this).val();
+            $.ajax({
+                url: url,
+                method: "POST",
+                data: { add_value: value },
+                success: function (html) {
+                    if (html == "true") {
+                        $(span_id).html('<span class="text-danger">' + msg_err_unique + '</span>');
+                        document.getElementById(button_id).disabled = true;
+                    }
+
+                    if (html == "false") {
+                        if (value == "") {
+                            $(span_id).html('<span class="text-danger">' + msg_err_empty + '</span>');
+                            document.getElementById(button_id).disabled = true;
+                        }
+                        else {
+                            $(span_id).html('<span></span>');
+                            document.getElementById(button_id).disabled = false;
+                        }
+                    }
+                }
+            });
+        });
+    });
+}
+//JS uniqueness AJAX function//

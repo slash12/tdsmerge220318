@@ -670,3 +670,14 @@ body
   font-size: 15px !important;
   font-weight: bold !important;
 }
+
+.tblspace
+{
+  border-collapse: separate;
+  border-spacing: 15px;
+}
+
+.modal-footer
+{
+  text-align: left !important;
+}
